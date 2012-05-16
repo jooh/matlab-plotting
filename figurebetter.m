@@ -5,7 +5,8 @@
 % small: 3 fit
 % medium: 2 fit
 % large: 1 fits
-% F = figure(F,figsize,axisar,visible)
+% F is a handle number or the string 'new' to find a unique handle
+% F = figure([F],figsize,[axisar],[visible])
 function F = figure(F,figsize,axisar,visible)
 
 % This is a bit awkward but often we only want to enter a size argument
@@ -16,6 +17,11 @@ end
 
 if ieNotDefined('F')
   F = 1;
+end
+
+if strcmp(F,'new')
+    % Ensure unique figure handle
+    F = max(get(0,'children'))+1;
 end
 
 if ieNotDefined('figsize')
@@ -91,6 +97,7 @@ set(F,'color',[1 1 1],... % white BG
   'defaulttextfontsize',9,...
   'defaultaxeslooseinset',[0 0 0 0],... % kill whitespace!
   'colormap',jet(1000)*.9,... %slightly muted jet with many gradients
+  'visible',visible,...
   'defaultaxesplotboxaspectratio',[1 axisar 1]);
 % Last argument sets aspect ratio of each plot box to match figure aspect
 % ratio. This makes for less whitespace and tends to be visually appealing
