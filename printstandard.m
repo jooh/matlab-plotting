@@ -26,7 +26,7 @@ set(gcf,'color',[1 1 1]);
 % Forcing painters means that alpha blending won't work but the output is
 % generally nicer otherwise
 print([fnbase '.png'],hand,'-dpng',res,'-noui','-painters');
-print([fnbase '.eps'],hand,'-depsc2','-noui','-painters');
+print([fnbase '.eps'],hand,'-depsc','-noui','-painters');
 
 % Trim whitespace
 system(sprintf('convert -density %d %s -trim %s',r,[fnbase '.png'],...
