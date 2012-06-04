@@ -102,10 +102,17 @@ for d = dims
     dstr = pref(d);
     ticks = get(ax,[dstr 'tick']);
     ntick = length(ticks);
-    if ntick ~= nimages
-        error('tick and length(images) do not match!')
-    end
     lims = get(ax,[dstr 'lim']);
+    if ntick ~= nimages
+        if range(lims) ~= nimages
+            error('tick and length(images) do not match!')
+        else
+            % probably an image - try to infer where ticks should be
+            set(ax,[dstr 'tick'],ceil(lims(1)):1:floor(lims(2)));
+            ticks = get(ax,[dstr 'tick']);
+            ntick = length(ticks);
+        end
+    end
     % normalise by lim
     t_norm = (ticks-lims(1)) / range(lims);
     % normalise by axis position in figure
