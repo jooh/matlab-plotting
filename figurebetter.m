@@ -5,7 +5,7 @@
 % small: 3 fit
 % medium: 2 fit
 % large: 1 fits
-% F is a handle number or the string 'new' to find a unique handle
+% F is a handle number (defaults to uniquehandle output)
 % F = figure([F],figsize,[axisar],[visible])
 function F = figure(F,figsize,axisar,visible)
 
@@ -16,12 +16,7 @@ if nargin==1
 end
 
 if ieNotDefined('F')
-  F = 1;
-end
-
-if strcmp(F,'new')
-    % Ensure unique figure handle
-    F = max(get(0,'children'))+1;
+  F = uniquehandle;
 end
 
 if ieNotDefined('figsize')
