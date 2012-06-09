@@ -1,6 +1,18 @@
 % Basic figure with subplot of images in cell array
+% call either with cell arrays images and optionally alpha, or with a
+% struct array with image and alpha fields.
 % f = showimages(images,[alpha]);
 function f = showimages(images,alphadata);
+
+% Support calling with a struct array (fields image, alpha)
+if nargin==1 && (isstruct(images) || isobject(images))
+    if isfield(images,'alpha')
+        alphadata = {images.alpha};
+    else
+        alphadata = [];
+    end
+    images = {images.image};
+end
 
 nimages = length(images);
 hw = ceil(sqrt(nimages));
