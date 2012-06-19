@@ -6,9 +6,9 @@ function f = showimages(images,alphadata);
 
 % Support calling with a struct array (fields image, alpha)
 if nargin==1 && (isstruct(images) || isobject(images))
-    if isfield(images,'alpha')
+    try 
         alphadata = {images.alpha};
-    else
+    catch
         alphadata = [];
     end
     images = {images.image};
@@ -32,4 +32,5 @@ for n = 1:nimages
     if hasalpha
         set(ih,'alphadata',alphadata{n});
     end
+    title(num2str(n));
 end
