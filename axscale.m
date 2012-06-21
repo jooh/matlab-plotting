@@ -1,4 +1,6 @@
 % Scale an axis whilst preserving its position in the figure.
+% sf is a scale factor (1 to preserve, .5 for half size etc)
+% axscale(sf,ax)
 function axscale(sf,ax)
 
 if ieNotDefined('ax')
