@@ -1,11 +1,12 @@
 % Basic figure with subplot of images in cell array
 % call either with cell arrays images and optionally alpha, or with a
-% struct array with image and alpha fields.
-% f = showimages(images,[alpha]);
-function f = showimages(images,alphadata);
+% struct array with image and alpha fields. dims gives rows and columns if
+% you have a specific shape in mind
+% f = showimages(images,[alpha],[dims]);
+function f = showimages(images,alphadata,dims);
 
 % Support calling with a struct array (fields image, alpha)
-if nargin==1 && (isstruct(images) || isobject(images))
+if (isstruct(images) || isobject(images))
     try 
         alphadata = {images.alpha};
     catch
@@ -15,7 +16,10 @@ if nargin==1 && (isstruct(images) || isobject(images))
 end
 
 nimages = length(images);
-hw = ceil(sqrt(nimages));
+
+if ieNotDefined('dims')
+    dims = repmat(ceil(sqrt(nimages)),[1 2]);
+end
 
 if ieNotDefined('alphadata')
     hasalpha = 0;
@@ -27,7 +31,7 @@ end
 f = figurebetter([15 15]);
 
 for n = 1:nimages
-    subplot(hw,hw,n);
+    subplot(dims(1),dims(2),n);
     ih = imshow(images{n});
     if hasalpha
         set(ih,'alphadata',alphadata{n});
