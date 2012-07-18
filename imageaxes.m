@@ -45,7 +45,12 @@ outh = NaN([1 n]);
 for im = 1:n
     a = axes('position',[xy_final(im,1) xy_final(im,2) imsize_sc imsize_sc],...
         'plotboxaspectratiomode','auto');
-    outh(im) = imshow(images{im});
+    % detect BW since this messes up colormap
+    if ndims(images{im}) < 3
+        outh(im) = imshow(repmat(images{im},[1 1 3]));
+    else
+        outh(im) = imshow(images{im});
+    end
     if ~noalpha
         set(outh(im),'alphadata',alphas{im});
     end

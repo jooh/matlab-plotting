@@ -142,7 +142,13 @@ for d = dims
         oc = oc+1;
         a = axes('position',[xlocs(im) ylocs(im) imsize(d) imsize(d)],...
             'plotboxaspectratiomode','auto');
-        outh(oc) = imshow(images{im});
+        if ndims(images{im}) < 3
+            % necessary because matlab bug means that imshowing a grayscale
+            % changes the figure colormap to gray
+            outh(oc) = imshow(repmat(images{im},[1 1 3]));
+        else
+            outh(oc) = imshow(images{im});
+        end
         if ~isempty(alpha)
             set(outh(oc),'alphadata',alpha{im});
         end
