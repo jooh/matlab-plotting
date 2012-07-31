@@ -2,7 +2,7 @@
 % fnbase - path and filename (with or without extension - we strip)
 % F - figure handle. Optional.
 % r - resolution (dpi). Defaults to 300.
-% forcepainters - always print with painters. Default 1.
+% forcepainters - always print with painters. Default 0.
 % Dependencies: convert (from ImageMagick)
 % printstandard(fnbase,[F],[r],[forcepainters])
 function printstandard(fnbase,F,r,forcepainters);
@@ -16,7 +16,7 @@ if ieNotDefined('r')
 end
 
 if ieNotDefined('forcepainters')
-    forcepainters = 1;
+    forcepainters = 0;
 end
 
 % Make sure no extension
