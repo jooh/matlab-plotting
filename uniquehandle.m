@@ -1,10 +1,12 @@
-% Returns a currently unused figure handle by adding 1 to the last one
-% found
-% h = uniquehandle;
-function h = uniquehandle;
+% Returns n currently unused figure handles by adding 1 to the last one
+% found. n defaults to 1
+% h = uniquehandle(n);
+function h = uniquehandle(n);
 
-hands = get(0,'children');
-h = 1;
-if ~isempty(hands)
-    h = round(max(hands)) + 1;
+if ieNotDefined('n')
+    n = 1;
 end
+
+% 0 is useful for the case of no open figs
+hands = [0; get(0,'children')];
+h = max(hands)+(1:n);
