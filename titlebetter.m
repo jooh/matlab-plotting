@@ -1,18 +1,29 @@
 % Place a 'title' as an axis object centered above the axis/axes in input.
 % Primarily useful for cases where you want a title that spans multiple
-% subplots.
-% t = titlebetter(titlestr,[ax]);
-function t = titlebetter(titlestr,ax);
+% subplots. useplotboxpos (default 1) centers on the plot boxes rather than
+% the subplot positions.
+% t = titlebetter(titlestr,[ax],[useplotboxpos]);
+function t = titlebetter(titlestr,ax,useplotboxpos);
 
 if ieNotDefined('ax')
     ax = gca;
 end
 
+if ieNotDefined('useplotboxpos')
+    useplotboxpos = 1;
+end
+
+if useplotboxpos
+    posfun = @plotboxpos;
+else
+    posfun = @(ax)get(ax,'position');
+end
+
 nax = length(ax);
 if nax > 1
-    pos = cell2mat(arrayfun(@plotboxpos,ax,'uniformoutput',false)');
+    pos = cell2mat(arrayfun(posfun,ax,'uniformoutput',false)');
 else
-    pos = plotboxpos(ax);
+    pos = posfun(ax);
 end
 
 % top position is the tallest available ax
