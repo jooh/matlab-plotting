@@ -12,7 +12,7 @@ if ieNotDefined('F')
 end
 
 if ieNotDefined('r')
-    r = 300;
+    r = 600;
 end
 
 if ieNotDefined('forcepainters')
