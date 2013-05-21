@@ -9,4 +9,4 @@ end
 
 % 0 is useful for the case of no open figs
 hands = [0; get(0,'children')];
-h = max(hands)+(1:n);
+h = round(max(hands)+(1:n)*10);
