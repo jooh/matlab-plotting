@@ -6,9 +6,9 @@
 % change you make to the figure before saving/printing. Returns a vector of
 % handles to the images (to easily make invisible, do
 % set(outh,'visible','off').
-% outh = imageticks([ax],images,[nrows],[dims],[alpha])
+% outh = imageticks([ax],images,[nrows],[dims],[imagealpha])
 % TODO: tick lines to each image
-function outh = imageticks(ax,images,nrows,dims,alpha)
+function outh = imageticks(ax,images,nrows,dims,imagealpha)
 
 if ieNotDefined('ax')
     ax = gca;
@@ -22,8 +22,8 @@ if ieNotDefined('dims')
     dims = [1 2];
 end
 
-if ieNotDefined('alpha')
-    alpha = [];
+if ieNotDefined('imagealpha')
+    imagealpha = [];
 end
 
 pref = 'xy';
@@ -149,8 +149,8 @@ for d = dims
         else
             outh(oc) = imshow(images{im});
         end
-        if ~isempty(alpha)
-            set(outh(oc),'alphadata',alpha{im});
+        if ~isempty(imagealpha)
+            set(outh(oc),'alphadata',imagealpha{im});
         end
     end
     set(ax,[dstr 'ticklabel'],[]);
