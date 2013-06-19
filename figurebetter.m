@@ -24,7 +24,7 @@ if ieNotDefined('figsize')
 end
 
 if ieNotDefined('visible')
-  visible='on';
+  visible = get(0,'defaultfigurevisible');
 end
 
 % Hack to allow 1/0 true/false options
