@@ -97,7 +97,7 @@ for r = 1:nrdm
         ax(pc) = subplot(nrow,plotcol,pc);
         if any(isnan(rd(:)))
             warning('skipping MDS due to nans in RDM')
-            axis(ax(pc,'off'));
+            axis(ax(pc),'off');
             if domds && dordm
                 t = titlebetter(titles{r},ax(pc-1:pc));
             elseif domds || dordm
