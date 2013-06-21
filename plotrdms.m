@@ -127,6 +127,10 @@ for r = 1:nrdm
                 % text labels
                 mm = [min(xy(:)) max(xy(:))];
                 axis(ax(pc),[mm mm]);
+                % plot white dots - bit hacky but stops figure auto
+                % cropping from obliterating the figure.
+                plot(xy(:,1),xy(:,2),'.w');
+                hold on
                 t = text(xy(:,1),xy(:,2),stripbadcharacters(labels,''),...
                     'verticalalignment','middle',...
                     'horizontalalignment','center','clipping','off');
