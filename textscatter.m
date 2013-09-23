@@ -49,8 +49,8 @@ if ~ishold
 end
 
 if plotmarker
-  halign = 'left';
-  valign = 'top';
+  halign = 'right';
+  valign = 'bottom';
 else
   % invisible plot to get axis limits set properly
   p = plot(x,y,'marker','none','linestyle','none');
