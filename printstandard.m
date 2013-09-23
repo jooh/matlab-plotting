@@ -4,20 +4,10 @@
 % r - resolution (dpi). Defaults to 300.
 % forcepainters - always print with painters. Default 0.
 % Dependencies: convert (from ImageMagick)
-% printstandard(fnbase,[F],[r],[forcepainters])
-function printstandard(fnbase,F,r,forcepainters);
+% printstandard(fnbase,varargin)
+function printstandard(fnbase,varargin);
 
-if ieNotDefined('F')
-  F = gcf;
-end
-
-if ieNotDefined('r')
-    r = 600;
-end
-
-if ieNotDefined('forcepainters')
-    forcepainters = 0;
-end
+getArgs(varargin,{'F',gcf,'r',600,'forcepainters',0,'loose',false});
 
 % Make sure no extension
 fnbase = stripext(fnbase);
@@ -28,17 +18,23 @@ hand = sprintf('-f%d',F);
 % Ideally 'none' but this is broken as of 2011a
 set(gcf,'color',[1 1 1]);
 
+args = {hand,[],res,'-noui'};
+
 if forcepainters
-    % Forcing painters means that alpha blending won't work but the output is
-    % generally nicer otherwise
-    print([fnbase '.png'],hand,'-dpng',res,'-noui','-painters');
-    print([fnbase '.eps'],hand,'-depsc','-noui','-painters');
-else
-    print([fnbase '.png'],hand,'-dpng',res,'-noui');
-    print([fnbase '.eps'],hand,'-depsc','-noui');
+    args(end+1) = {'-painters'};
 end
 
+if loose
+    args(end+1) = {'-loose'};
+end
+
+%args{2} = '-dpng';
+%print([fnbase '.png'],args{:});
+args{2} = '-depsc2';
+print([fnbase '.eps'],args{:});
+%args{2} = '-dpdf';
+%print([fnbase '.pdf'],args{:});
 
 % Trim whitespace
-system(sprintf('convert -density %d %s -trim %s',r,[fnbase '.png'],...
-  [fnbase '.png']));
+%system(sprintf('convert -density %d %s -trim %s',r,[fnbase '.png'],...
+%  [fnbase '.png']));
