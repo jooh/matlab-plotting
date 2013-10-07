@@ -7,6 +7,7 @@
 % xs - x positions (we ignore NaN entries)
 % pmat - condition by nx matrix of p stats
 % cmat - condition by rgb matrix of colours
+% ypos - position in y 
 %
 % NAMED INPUTS:
 % sigthresh - default .05
