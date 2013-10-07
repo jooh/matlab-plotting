@@ -79,8 +79,9 @@ if ngroup==1
     B = bar(x,y,width,'edgecolor',edgecolor,'facecolor',facecolor);
   else
     % need one call per color
+    hold on
     B = arrayfun(@(ind)bar(x(ind),y(ind),width,'edgecolor',...
-      edgecolor(ind,:),'facecolor',facecolor(ind,:)),1:ndata);
+      edgecolor(ind,:),'facecolor',facecolor(ind,:)),1:ncolor);
   end
 else
   % grouped bars - one bar handle per data
@@ -101,7 +102,10 @@ else
   end
 end
 
-if ~isempty(errors)
+if ~isempty(errors) && ~all(isnan(errors(:)))
+  if iscol(errors)
+      errors = errors';
+  end
   errsize = size(errors);
   if ~isequal(size(y),size(errors));
     assert(errsize(1)==2,['3d errors inputs must have ' ...
