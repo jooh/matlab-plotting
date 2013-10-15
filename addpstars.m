@@ -19,6 +19,13 @@ function t = addpstars(ax,xs,pmat,cmat,varargin)
 getArgs(varargin,{'sigthresh',.05,'sigsym','*','fontsize',10,...
   'ypos',max(get(ax,'ylim'))});
 
+t = [];
+if all(isnan(pmat(:)) | pmat(:) > sigthresh)
+    % nothing to do here
+    return;
+end
+
+xs = xs(~isnan(xs));
 nx = size(pmat,2);
 np = size(pmat,1);
 if numel(ypos)==1
@@ -34,5 +41,5 @@ for x = 1:size(pmat,2)
     end
   end
 end
-t = text(xs(~isnan(xs)),ypos(~isnan(ypos)),pstr,'verticalalignment',...
+t = text(xs(~isnan(ypos)),ypos(~isnan(ypos)),pstr,'verticalalignment',...
   'bottom','horizontalalignment','center');
