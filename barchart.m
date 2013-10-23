@@ -103,7 +103,7 @@ else
 end
 
 if ~isempty(errors) && ~all(isnan(errors(:)))
-  if iscol(errors)
+  if iscol(errors) && nface ~= 1
       errors = errors';
   end
   errsize = size(errors);
