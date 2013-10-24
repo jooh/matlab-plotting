@@ -60,7 +60,7 @@ function runplots(rankrdm,stimuli,ts,name,figdir,cblabel,ticklabel)
         ts.mdstimsize,'titles',name,'dordm',false,'visible','off');
     % mds plot really doesn't need to be eps
     print(fullfile(figdir,sprintf('mds_%s.png',printname)),'-dpng',...
-        '-r300',['-f' num2str(F)]);
+        '-r150',['-f' num2str(F)]);
     printstandard(fullfile(figdir,sprintf(...
         'diagnostic_mds_shepard_%s',printname)),'F',Fshep);
     close(F);
