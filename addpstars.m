@@ -25,9 +25,16 @@ if all(isnan(pmat(:)) | pmat(:) > sigthresh)
     return;
 end
 
+
+
 xs = xs(~isnan(xs));
 nx = size(pmat,2);
 np = size(pmat,1);
+if ieNotDefined('cmat')
+    % assume you want all black
+    cmat = zeros(np,3);
+end
+
 if numel(ypos)==1
   ypos = repmat(ypos,[1 nx]);
 end
