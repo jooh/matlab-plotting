@@ -10,6 +10,8 @@
 % errors: []: either same shape as y for symmetrical error bars OR 2 by
 %   yshape for non-symmetrical bars, e.g. confidence intervals (we subtract
 %   mean from each before passing to errorbar)
+% pvalues: we plot all p values so threshold before calling this
+% pstyle: 'marker' or 'text'
 % rotatelabels: default 45 - only applied to string xlabels
 % fighand: default [] - if defined, we plot to this figure instead of
 %   making a new one.
@@ -20,7 +22,7 @@ function [fighand,B] = barchart(y,varargin)
 
 getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'errorcolor',[0 0 0],'width',[],'errors',[],'rotatelabels',45,...
-    'x',[],'fighand',[],'pad',.5});
+    'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','marker'});
 
 if isempty(fighand)
     fighand = figurebetter('medium');
@@ -122,6 +124,25 @@ if ~isempty(errors) && ~all(isnan(errors(:)))
     'color',errorcolor);
   % kill errorbar caps
   arrayfun(@errorbar_tick,E(:),zeros(numel(E),1));
+end
+
+if ~isempty(pvalues) && ~all(isnan(pvalues(:)))
+    psize = size(pvalues);
+    assert(isequal(size(y),psize));
+    ypos = y(:);
+    if ~ieNotDefined('errpos')
+        ypos = y(:) + errpos(:);
+    end
+    % pad
+    ypos = ypos + (range(ylim) * .02);
+    switch lower(pstyle)
+        case 'marker'
+            t = addpstars(gca,xerr(:)',pvalues(:)',[],'ypos',ypos);
+        case 'text'
+            t = addptext(xerr(:),ypos,pvalues(:),gca);
+        otherwise
+            error('unknown pstyle: %s',pstyle);
+    end
 end
 
 % replot 0 line since Matlab usually messes this up
