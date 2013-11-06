@@ -78,16 +78,18 @@ if ngroup==1
   xerr = x;
   if ncolor==1
     % simple case
-    B = bar(x,y,width,'edgecolor',edgecolor,'facecolor',facecolor);
+    B = bar(x,y,width,'edgecolor',edgecolor,'facecolor',facecolor,...
+        'showbaseline','off');
   else
     % need one call per color
     hold on
     B = arrayfun(@(ind)bar(x(ind),y(ind),width,'edgecolor',...
-      edgecolor(ind,:),'facecolor',facecolor(ind,:)),1:ncolor);
+      edgecolor(ind,:),'facecolor',facecolor(ind,:),...
+        'showbaseline','off'),1:ncolor);
   end
 else
   % grouped bars - one bar handle per data
-  B = bar(x,y,width);
+  B = bar(x,y,width,'showbaseline','off');
   if ncolor>0
     % set colors for each bar group - this method is roundabout but avoids
     % changing the colormap for the figure.
