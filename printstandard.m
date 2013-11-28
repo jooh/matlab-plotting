@@ -28,8 +28,8 @@ if loose
     args(end+1) = {'-loose'};
 end
 
-%args{2} = '-dpng';
-%print([fnbase '.png'],args{:});
+args{2} = '-dpng';
+print([fnbase '.png'],args{:});
 args{2} = '-depsc2';
 print([fnbase '.eps'],args{:});
 %args{2} = '-dpdf';
