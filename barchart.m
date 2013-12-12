@@ -66,7 +66,7 @@ if nedge>1
     assert(nedge==nface,'edgecolor must be one entry or same as nface');
   end
 end
-ncolor = nface;
+ncolor = max([nface nedge]);
 if (ngroup>1 && ncolor~=ndata)
   warning('not enough colors for data - switching to color mapped colors');
   ncolor = 0;
