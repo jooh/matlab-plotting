@@ -3,7 +3,7 @@
 % struct array with image and alpha fields. dims gives rows and columns if
 % you have a specific shape in mind
 % f = showimages(images,[alpha],[dims]);
-function f = showimages(images,alphadata,dims);
+function f = showimages(images,alphadata,dims,plotfun);
 
 % Support calling with a struct array (fields image, alpha)
 if (isstruct(images) || isobject(images))
@@ -28,11 +28,15 @@ else
     assert(length(alphadata)==nimages,'n images does not match n alpha');
 end
 
+if ieNotDefined('plotfun')
+    plotfun = 'imshow';
+end
+
 f = figurebetter([15 15]);
 
 for n = 1:nimages
     subplot(dims(1),dims(2),n);
-    ih = imshow(images{n});
+    ih = feval(plotfun,images{n});
     if hasalpha
         set(ih,'alphadata',alphadata{n});
     end
