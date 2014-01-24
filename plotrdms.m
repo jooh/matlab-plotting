@@ -5,7 +5,8 @@ getArgs(varargin,{'labels',[],'imagealpha',[],'nrows',2,'cmap',jet(1e3),...
     'titles',[],'colorbarargs',{},'rotatelabels',45,'docb',false,...
     'fighand',[],'plotcol',4,'dordm',true,'domds',false,'mdstimsize',[],...
     'ranktransform',false,'mdsshepard',false,'alphacolor',[],...
-    'visible','on','labelfontsize',10});
+    'visible','on','labelfontsize',10,'mddim',2});
+assert(mddim < 3,'mddim must be 1 or 2');
 
 if isempty(fighand)
     fighand = figure;
@@ -108,8 +109,11 @@ for r = 1:nrdm
             continue
         end
         try
-            [xy,stress,disparities] = mdscale_robust(rd,2,'criterion',...
+            [xy,stress,disparities] = mdscale_robust(rd,mddim,'criterion',...
                 'metricstress');
+            if mddim==1
+                xy = [xy xy];
+            end
         catch err
             if strcmp(err.identifier,'stats:mdscale:ColocatedPoints')
                 warning('skipping MDS plot due to colocated points')
