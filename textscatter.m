@@ -3,18 +3,21 @@
 % INPUTS:
 % x: coordinates
 % y: coordinates
-% t: cell array of strings
+% thand: cell array of strings
 % colors: default [0 0 0]. If size(colors,1) matches numel(x) we plot each
 %   text string (and maybe marker) in the specified color.
 % plotmarker: default false. If true, we plot a . at each x,y coordinate
 %   and shift the text labels over.
 %
 % OUTPUTS:
-% t: handles to text objects
+% thand: handles to text objects
 % p: handles to markers
 %
-% [t,p] = textscatter(x,y,t,[colors],plotmarker)
-function [t,p] = textscatter(x,y,t,colors,plotmarker)
+% [thand,p] = textscatter(x,y,t,[colors],plotmarker)
+function [thand,p] = textscatter(x,y,t,colors,plotmarker)
+
+thand = [];
+p = [];
 
 % skip nans
 nans = isnan(x) | isnan(y);
@@ -58,15 +61,15 @@ else
   valign = 'middle';
 end
 
-t = text(x,y,t,'horizontalalignment',halign,'verticalalignment',valign);
+thand = text(x,y,t,'horizontalalignment',halign,'verticalalignment',valign);
 if size(colors,1)==1
-  set(t,'color',colors);
+  set(thand,'color',colors);
   if plotmarker
-    p = plot(x,y,'.','color',colors,'markersize',20);
+    p = plot(x,y,'.','color',colors);
   end
 else
   for ind = 1:n
-    set(t(ind),'color',colors(ind,:));
+    set(thand(ind),'color',colors(ind,:));
     if plotmarker
       p(ind) = plot(x(ind),y(ind),'.','color',colors(ind,:));
     end
