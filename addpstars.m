@@ -4,12 +4,12 @@
 %
 % INPUTS:
 % ax - default gca
-% xs - x positions (we ignore NaN entries)
-% pmat - condition by nx matrix of p stats
-% cmat - condition by rgb matrix of colours
-% ypos - position in y 
+% xs - [1 by nx] x positions (we ignore NaN entries)
+% pmat - [condition by nx] matrix of p stats
+% cmat - [condition by rgb] matrix of colours
 %
 % NAMED INPUTS:
+% ypos - [condition by 1] position in y. We use max(ylim) if undefined.
 % sigthresh - default .05
 % sigsym - default '*'
 % 
