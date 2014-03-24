@@ -84,6 +84,7 @@ for r = 1:nrdm
         pc = pc+1;
         ax(pc) = subplot(nrow,plotcol,pc);
         [im,intmap,cmap] = intensity2rgb(rd,cmap);
+        im(diagind(size(im))) = 1;
         image(im);
         switch labelmode
             case 1
