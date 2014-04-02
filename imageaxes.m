@@ -47,8 +47,8 @@ if strcmp(axdir,'normal')
     end
 end
 
-washold = ishold;
-hold on;
+washold = ishold(ax);
+hold(ax,'on');
 for im = 1:n
     imsize = size(images{im});
     aspectratio = imsize(1)/imsize(2);
@@ -68,5 +68,5 @@ set(outh,'clipping','off');
 set(ax,'visible',axstate,'position',axpos,'xlim',axx,'ylim',axy,...
     'ydir',axdir,'tickdir',axtickdir);
 if ~washold
-    hold off;
+    hold(ax,'off');
 end
