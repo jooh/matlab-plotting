@@ -1,5 +1,14 @@
-% varargin are passed to line
-% phand = plotmdslines(ax,xy,rdm,cmap,varargin)
+% plot lines between points in xy according to the dissimilarities in rdm.
+% The intensity of dissimilarity is colour coded according to cmap. any
+% additional varargin are passed to line.
+%
+% ax: (default gca) axis for plot
+% xy: n by 2 set of coordinates for each condition in the RDM
+% rdm: vector, struct or matrix form
+% cmap: color map for line colours (default autumn)
+% varargin: any valid arguments for Matlab's line function
+%
+% phand = plotmdslines(ax,xy,rdm,cmap,[varargin])
 function phand = plotmdslines(ax,xy,rdm,cmap,varargin)
 
 rdvec = asrdmvec(rdm);
@@ -21,15 +30,12 @@ if ieNotDefined('cmap');
     cmap = autumn(nudis);
 end
 
-% there are fancy ways to do this but for now, the dumb solution is to just
-% iterate over all dissimilarities
 for d = 1:ndis
     dis = rdvec(d);
     if isnan(dis)
         continue
     end
-    % find the conditions to which this dissimilarity belongs (is this
-    % right?)
+    % find the conditions to which this dissimilarity belongs
     logvec = false([ndis 1]);
     logvec(d) = true;
     logmat = squareform(logvec);
