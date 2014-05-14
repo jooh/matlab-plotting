@@ -8,7 +8,7 @@
     %'visible','on','labelfontsize',10,'mddim',2
 function [fighand,figshep] = plotrdms(rdm,varargin)
 
-getArgs(varargin,{'labels',[],'imagealpha',[],'nrows',2,'cmap',jet(1e3),...
+getArgs(varargin,{'labels',[],'imagealpha',[],'nrows',2,'cmap',cmap_bwr,...
     'titles',[],'colorbarargs',{},'rotatelabels',45,'docb',false,...
     'fighand',[],'plotcol',4,'dordm',true,'domds',false,'mdstimsize',[],...
     'ranktransform',false,'mdsshepard',false,'alphacolor',[],...
@@ -83,7 +83,7 @@ for r = 1:nrdm
     if dordm
         pc = pc+1;
         ax(pc) = subplot(nrow,plotcol,pc);
-        [im,intmap,cmap] = intensity2rgb(rd,cmap);
+        [im,intmap{r},cmap2] = intensity2rgb(rd,cmap);
         im(diagind(size(im))) = 1;
         image(im);
         switch labelmode
@@ -153,6 +153,7 @@ for r = 1:nrdm
             case 2
                 % image labels
                 imageaxes(ax(pc),xy,labels,imagealpha,mdstimsize);
+                axis(ax(pc),'off');
         end
         if mdsshepard
             figshep(end+1) = figure;
@@ -171,13 +172,5 @@ end
 
 if docb
     ax(nplot) = subplot(nrow,plotcol,nplot);
-    c = colorbarbetter(ax(nplot),intmap,cmap,colorbarargs{:});
-end
-
-% fix pathological behaviour due to unit change in imageticks
-if labelmode==2
-    fpos = get(fighand,'position');
-    if any(fpos(3:4)>get(fighand,'papersize'));
-        set(fighand,'papersize',fpos(3:4),'paperposition',[0 0 fpos(3:4)]);
-    end
+    c = colorbarbetter(ax(nplot),intmap{1},cmap,colorbarargs{:});
 end
