@@ -1,9 +1,11 @@
 % Basic figure with subplot of images in cell array
 % call either with cell arrays images and optionally alpha, or with a
 % struct array with image and alpha fields. dims gives rows and columns if
-% you have a specific shape in mind
-% f = showimages(images,[alpha],[dims]);
-function f = showimages(images,alphadata,dims,plotfun);
+% you have a specific shape in mind. plotfun is a handle to substitute
+% imshow (e.g. for plotting intensity images with imagesc).
+%
+% f = showimages(images,[alpha],[dims],[plotfun],[donumbers]);
+function f = showimages(images,alphadata,dims,plotfun,donumbers);
 
 % Support calling with a struct array (fields image, alpha)
 if (isstruct(images) || isobject(images))
@@ -19,6 +21,10 @@ nimages = length(images);
 
 if ieNotDefined('dims')
     dims = repmat(ceil(sqrt(nimages)),[1 2]);
+end
+
+if ieNotDefined('donumbers')
+    donumbers = true;
 end
 
 if ieNotDefined('alphadata')
@@ -40,5 +46,7 @@ for n = 1:nimages
     if hasalpha
         set(ih,'alphadata',alphadata{n});
     end
-    title(num2str(n));
+    if donumbers
+        title(num2str(n));
+    end
 end
