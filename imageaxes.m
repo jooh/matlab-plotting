@@ -14,10 +14,6 @@ if ieNotDefined('ax')
 end
 % essential for square pixels
 set(ax,'dataaspectratio',[1 1 1]);
-if ieNotDefined('imheight')
-    % 15% of current y limits
-    imheight = range(ylim)*.15;
-end
 
 [n,ndim] = size(xy);
 assert(ndim==2,'only 2 dimensions are supported!')
@@ -26,6 +22,16 @@ assert(n==length(images),'images and xy are different lengths')
 hasalpha = ~ieNotDefined('alphas');
 if hasalpha
     assert(n==length(alphas),'alpha and xy are different lengths');
+end
+
+washold = ishold(ax);
+hold(ax,'on');
+% plot some points to insure that the limits are set reasonably
+p = plot(xy(:,1),xy(:,2),'or');
+
+if ieNotDefined('imheight')
+    % 15% of current y limits
+    imheight = range(ylim(ax))*.15;
 end
 
 % unfortunately imshow likes to muck about with the plot settings so to
@@ -47,8 +53,6 @@ if strcmp(axdir,'normal')
     end
 end
 
-washold = ishold(ax);
-hold(ax,'on');
 for im = 1:n
     imsize = size(images{im});
     aspectratio = imsize(1)/imsize(2);
@@ -70,3 +74,8 @@ set(ax,'visible',axstate,'position',axpos,'xlim',axx,'ylim',axy,...
 if ~washold
     hold(ax,'off');
 end
+
+% scale up axis to accommodate points on periphery
+imsc = imheight / range(ylim(ax));
+axis(ax,axis(ax)*(1+imsc));
+delete(p);
