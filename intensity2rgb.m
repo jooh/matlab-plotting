@@ -1,8 +1,6 @@
 % convert a 2D intensity image to RGB values according to colormap cmap.
 %
-% cmap defaults to jet(nunique) where nunique is the number of unique
-% entries in mat or 1e3, whichever is less. This colormap is optionally
-% returned for making colorbars and such.
+% cmat details to cmap_bwr.
 %
 % imshow(im) produces identical graphical output to imagesc(mat) if the
 % colormap contains the same number of entries as the number of unique
@@ -11,35 +9,63 @@
 % colormap these divergences will be very small. To minimise any confusion
 % it is always safest to make your own colorbar.
 %
-% [im,intmap,cmap] = intensity2rgb(mat,[cmap])
-function [im,intmap,cmap] = intensity2rgb(mat,cmap)
+% [im,intmap,cmap] = intensity2rgb(mat,[cmap],[limits],[greythresh])
+function [im,intmap,cmap] = intensity2rgb(mat,cmap,limits,greythresh)
 
 assert(ndims(mat)==2,'input mat must be 2d, got %dd',ndims(mat))
 
+if ieNotDefined('greythresh')
+    % no gray scale
+    greythresh = -Inf;
+end
+
+% get all unique intensities
 umat = unique(mat(:));
+% (stripping nans)
+umat(isnan(umat)) = [];
 nu = length(umat);
+
 if ieNotDefined('cmap')
-    cmap = jet(min([nu 1e3]));
+    cmap = cmap_bwr;
+end
+
+if ieNotDefined('limits')
+    limits = [min(mat(:)) max(mat(:))];
+end
+
+if ieNotDefined('nancolor')
+    nancolor = [1 1 1];
 end
 
 ncolor = size(cmap,1);
+
+% these are the intensities in the colour map. We want whatever is closest
+intmap = linspace(limits(1),limits(2),ncolor);
+
+% greyscale and muted colormap
+gmap = repmat(mean(cmap,2),[1 3]) * .9;
+cmap(intmap<greythresh,:) = gmap(intmap<greythresh,:);
+
 % put in final, white entry to represent NaNs
 cmap(end+1,:) = [1 1 1];
 
-matscaled = round(normalizerange(mat,1,ncolor));
+% convert the image intensities to the range of the color map indices
+% matscaled = round(normalizerange(mat,1,ncolor));
 % index final, white color for NaNs
-nanmask = isnan(mat);
-matscaled(nanmask) = ncolor+1;
+% nanmask = isnan(mat);
+% matscaled(nanmask) = ncolor+1;
 im = zeros([size(mat) 3]);
+nanmat = isnan(mat);
 for r = 1:size(mat,1)
     for c = 1:size(mat,2)
-        im(r,c,:) = cmap(matscaled(r,c),:);
+        % closest colour
+        if nanmat(r,c)
+            ind = ncolor+1;
+        else
+            [~,ind] = min(abs(mat(r,c)-intmap));
+        end
+        im(r,c,:) = cmap(ind,:);
     end
-end
-
-if nargout > 1
-    % return the intensities for each level
-    intmap = umat(round(linspace(1,nu,ncolor)));
 end
 
 if nargout > 2
