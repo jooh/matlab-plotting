@@ -34,7 +34,7 @@ end
 % If axis size is normalise the whole thing breaks as soon as you resize
 % the figure
 set(gcf,'defaultaxesunits','centimeters','units','centimeters');
-set(ax,'units','centimeters')
+set(ax,'units','centimeters','dataaspectratio',[1 1 1]);
 
 % Ensure manual ticks
 set(ax,'xtickmode','manual');
