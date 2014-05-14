@@ -16,13 +16,15 @@
 % fighand: default [] - if defined, we plot to this figure instead of
 %   making a new one.
 % pad: default .5 - xlim padding on either side of bars. 
+% plotbaseline: default true
 %
 % [fighand,barhand] = barchart(y,varargin)
 function [fighand,B] = barchart(y,varargin)
 
 getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'errorcolor',[0 0 0],'width',[],'errors',[],'rotatelabels',45,...
-    'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','marker'});
+    'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','marker',...
+    'plotbaseline',true,'errorwidth',.5});
 
 if isempty(fighand)
     fighand = figurebetter('medium');
@@ -123,7 +125,7 @@ if ~isempty(errors) && ~all(isnan(errors(:)))
   end
   hold on
   E = errorbar(xerr(:),y(:),errpos(:),errneg(:),'linestyle','none',...
-    'color',errorcolor);
+    'color',errorcolor,'linewidth',errorwidth);
   % kill errorbar caps
   arrayfun(@errorbar_tick,E(:),zeros(numel(E),1));
 end
@@ -147,13 +149,15 @@ if ~isempty(pvalues) && ~all(isnan(pvalues(:)))
     end
 end
 
-% replot 0 line since Matlab usually messes this up
 xlim([x(1)-pad x(end)+pad]);
-lh=line(xlim,[0 0],'linewidth',1.2,'color',[0 0 0]);
-uistack(lh,'top');
-% also insure axis limits are on top of bars - both these are necessary
-% when 0 point is not at xlim(1) 
-set(gca,'layer','top');
+if plotbaseline
+    % replot 0 line since Matlab usually messes this up
+    lh=line(xlim,[0 0],'linewidth',1.2,'color',[0 0 0]);
+    uistack(lh,'top');
+    % also insure axis limits are on top of bars - both these are necessary
+    % when 0 point is not at xlim(1) 
+    set(gca,'layer','top');
+end
 
 set(gca,'xtick',x,'xticklabel',labels,'tickdir','out','ticklength',...
     get(gca,'ticklength')*.5);
