@@ -49,18 +49,20 @@ c = image(x,y,cmap);
 set(ax,'ydir','normal','plotboxaspectratio',ar,'dataaspectratiomode',...
     'auto');
 if ~isempty(tick)
-    if strfind(lower(tick),'min')
-        tick = [min(intmap) max(intmap)];
+    if any(strfind(lower(tick),'min'))
+        tickval = [min(intmap) max(intmap)];
         % insert 0 if we pass through it
-        if strcmp(lower(tick),'minimal') && (tick(1) * tick(2)) < 0
-            tick = [tick(1) 0 tick(2)];
+        if strcmp(lower(tick),'minimal') && (tickval(1) * tickval(2)) < 0
+            tickval = [tickval(1) 0 tickval(2)];
         end
+    else
+        tickval = tick;
     end
-    set(ax,[o 'tick'],tick);
+    set(ax,[o 'tick'],tickval);
 end
 if ~isempty(ticklabel)
     set(ax,[o 'ticklabel'],ticklabel);
 end
-set(ax,[noto 'tick'],[]);
+set(ax,[noto 'tick'],[],'ticklength',[0 0]);
 feval([o 'label'],ax,label);
 axscale(scale,ax);
