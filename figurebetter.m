@@ -49,6 +49,8 @@ if isstr(figsize)
       modifier = 1/2;
     case {'large'}
       modifier = 1;
+  case {'huge'}
+      modifier = 1.5;
     otherwise
       error('unknown figsize: %s',figsize)
   end
