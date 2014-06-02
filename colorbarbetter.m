@@ -6,6 +6,10 @@
 %
 % For reference intmap / cmap, see intensity2rgb.
 %
+% in general, intmap should either have the same number of entries as rows
+% in cmap, or should have precisely 2, in which case we assume you want a
+% linear mapping between these 2.
+%
 % named, optional inputs:
 % orientation: {'vertical'} 'horizontal'
 % label: ''
@@ -23,9 +27,15 @@ end
 
 getArgs(varargin,{'orientation','horizontal','label','','tick','minimal',...
     'ticklabel',{},'aspectratio',5,'scale',.25});
-
 nc = size(cmap,1);
-assert(nc == numel(intmap),'intmap does not match cmap!');
+
+if numel(intmap)==2
+        % assume you mean a linear mapping
+        intmap = linspace(intmap(1),intmap(2),nc); 
+else 
+    assert(nc == numel(intmap),'intmap does not match cmap!');
+end
+
 axis(ax);
 switch lower(orientation)
     case 'vertical'
