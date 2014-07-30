@@ -3,6 +3,11 @@
 % matchaxis(ax)
 function matchaxis(ax)
 
+if numel(ax) < 2
+  % nothing to match
+  return
+end
+
 % match data limits
 axmat = cell2mat(axis(ax));
 nd = size(axmat,2);
