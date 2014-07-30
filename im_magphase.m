@@ -2,14 +2,14 @@
 % image through 2d fft. RGB images are first converted to grayscale with
 % mat2gray.
 %
-% scalemag defaults to true, which means that the magnitude is log
+% scalemag defaults to false, which means that the magnitude is log
 % transformed for visualisation purposes.
 %
 % [mag,phase] = im_magphase(im,[scalemag])
 function [mag,phase] = im_magphase(im,scalemag)
 
 if ieNotDefined('scalemag')
-    scalemag = true;
+    scalemag = false;
 end
 if ndims(im)==3
     % make grayscale. Could also imagine applying fft2 separately to each
