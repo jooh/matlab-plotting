@@ -18,8 +18,8 @@
 % pad: default .5 - xlim padding on either side of bars. 
 % plotbaseline: default true
 %
-% [fighand,barhand] = barchart(y,varargin)
-function [fighand,B] = barchart(y,varargin)
+% [fighand,barhand,errs] = barchart(y,varargin)
+function [fighand,B,E] = barchart(y,varargin)
 
 getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'errorcolor',[0 0 0],'width',[],'errors',[],'rotatelabels',45,...
@@ -108,6 +108,7 @@ else
   end
 end
 
+E = [];
 if ~isempty(errors) && ~all(isnan(errors(:)))
   if iscol(errors) && nface ~= 1
       errors = errors';
