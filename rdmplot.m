@@ -36,9 +36,17 @@ getArgs(varargin,{'labels',[],'imagealpha',[],'nrows',2,'cmap',cmap_bwr,...
     'rotatelabels',90,'collapseunused',false,'collapsesplitrdm',false,...
     'limits',[],'gridcolor',[],'gridlines',[],'greythresh',[]});
 
+if nargin==1
+    % special single input mode
+    rdm = ax;
+    clear ax;
+end
+
 if ieNotDefined('ax')
     ax = gca;
 end
+
+
 
 if ~isempty(gridlines) && isempty(gridcolor)
     gridcolor = [1 1 1];
