@@ -57,13 +57,17 @@ if isstr(figsize)
   figsize = a4(1) .* [modifier modifier*figar];
 end
 
+axisararg = 'defaultaxesplotboxaspectratio';
 if ieNotDefined('axisar')
   axisar = figsize(2)/figsize(1);
 end
+if numel(axisar) < 3
+    axisar = [1 axisar 1];
+end
 
-% scale figure presentation on the screen with print size (this actually
-% makes no difference for print size but is helpful for visual inspection).
-cm2pix = 30;
+if strcmp(axisar,'auto')
+    axisararg = [axisararg 'mode'];
+end
 
 iptsetpref('ImshowBorder','tight');
 
@@ -93,9 +97,6 @@ set(F,'color',[1 1 1],... % white BG
   'defaulttextfontname',fon,...
   'defaulttextfontsize',7,...
   'defaultaxeslooseinset',[0 0 0 0],... % kill whitespace!
-  'colormap',jet(1000)*.9,... %slightly muted jet with many gradients
+  'colormap',cmap_bwr,...
   'visible',visible,...
-  'defaultaxesplotboxaspectratio',[1 axisar 1]);
-% Last argument sets aspect ratio of each plot box to match figure aspect
-% ratio. This makes for less whitespace and tends to be visually appealing
-% for subplots
+  axisararg,axisar);
