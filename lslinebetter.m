@@ -34,6 +34,9 @@ else
     ydat = get(phand(p),'YData');
     fit = polyfit(xdat,ydat,1);
     lhand(end+1) = refline(fit);
-    set(lhand(end),'color',get(phand(p),'color'));
+    try
+        % bit ugly but this can fail if puttin a slope on e.g. bar data.
+        set(lhand(end),'color',get(phand(p),'color'));
+    end
   end
 end
