@@ -12,14 +12,17 @@
 % ypos - [condition by 1] position in y. We use max(ylim) if undefined.
 % sigthresh - default .05
 % sigsym - default '*'
+% verticalalignment - default 'bottom'
+% horizontalalignment - default 'center'
 % 
 % t = addpstars(ax,xs,pmat,cmat,varargin)
 function t = addpstars(ax,xs,pmat,cmat,varargin)
 
 getArgs(varargin,{'sigthresh',.05,'sigsym','*','fontsize',10,...
-  'ypos',max(get(ax,'ylim'))});
+  'ypos',max(get(ax,'ylim')),'verticalalignment','bottom',...
+    'horizontalalignment','center'});
 
-t = [];
+t = NaN;
 if all(isnan(pmat(:)) | pmat(:) > sigthresh)
     % nothing to do here
     return;
@@ -49,4 +52,6 @@ for x = 1:size(pmat,2)
   end
 end
 t = text(xs(~isnan(ypos)),ypos(~isnan(ypos)),pstr,'verticalalignment',...
-  'bottom','horizontalalignment','center');
+  verticalalignment,'horizontalalignment',horizontalalignment,...
+    'fontsize',fontsize,...
+    'fontweight','bold','parent',ax);
