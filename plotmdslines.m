@@ -21,11 +21,11 @@ nudis = length(udis);
 if ieNotDefined('cmap');
     cmap = autumn(nudis);
 end
-if size(cmat,1) ~= nudis
-    assert(size(cmat,1)==1,['cmap must have one entry or same as '...
-        'number of unique dissimilarities. Got %d''],size(cmat,1));
+if size(cmap,1) ~= nudis
+    assert(size(cmap,1)==1,['cmap must have one entry or same as '...
+        'number of unique dissimilarities. Got %d'],size(cmap,1));
     % upcast to nudis
-    cmat = cmat(ones(nudis,1),:);
+    cmap = cmap(ones(nudis,1),:);
 end
 
 % flip order so shorter dissimilarities get plotted over longer ones (this
@@ -41,7 +41,6 @@ assert(ncon==npairs2n(ndis),'xy and rdm do not match');
 if ieNotDefined('ax')
     ax = gca;
 end
-
 
 for d = 1:ndis
     dis = rdvec(d);
