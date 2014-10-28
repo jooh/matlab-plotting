@@ -18,7 +18,7 @@ if ieNotDefined('names')
     if isstruct(rdm)
         names = {rdm.name};
     else
-        names = vec2str(1:nrdm,'rdm %02d');
+        names = mat2strcell(1:nrdm,'rdm %02d');
     end
 end
 
