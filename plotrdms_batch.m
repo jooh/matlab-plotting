@@ -47,7 +47,7 @@ if all(isnan(data(:)))
 end
 nroi = size(data,2);
 if isempty(roinames)
-    roinames = vec2str(1:nroi,'rdm %02d');
+    roinames = mat2strcell(1:nroi,'rdm %02d');
 end
 
 if ranktransform && strcmp(cblabel,'dissimilarity')
@@ -76,7 +76,7 @@ for roi = 1:nroi
     end
     thisdata = data(:,roi);
     if ranktransform
-        thisdata = tiedrank(thisdata);
+        thisdata = ranktrans(thisdata);
     end
     thisrdm = vec2rdm(thisdata);
     printname = stripbadcharacters(roinames{roi});
