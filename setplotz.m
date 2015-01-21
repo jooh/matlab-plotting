@@ -6,6 +6,10 @@
 function setplotz(phand,z)
 
 px = get(phand,'xdata');
+if ~iscell(px)
+    px = {px};
+end
+
 for p = 1:length(phand)
     set(phand(p),'zdata',repmat(z,[1,numel(px{p})]));
 end
