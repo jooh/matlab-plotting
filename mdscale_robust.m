@@ -1,5 +1,6 @@
 % call mdscale as usual, but handle ColocatedPoints error by adding fake
-% dissimilarities to data.Same inputs/outputs as mdscale.
+% dissimilarities to data, and NoSolution error by multiplying
+% dissimilarities by a scalar. Same inputs/outputs as mdscale.
 % [y,stress,disparities] = mdscale_robust(rdm,varargin);
 function [y,stress,disparities] = mdscale_robust(rdm,varargin);
 
@@ -26,6 +27,12 @@ catch err
                 rethrow(err2);
             end
         end
+    elseif strcmp(err.identifier,'stats:mdscale:NoSolution')
+        % try just multiplying by a scalar. Matlab's mdscale has a dumb
+        % threshold setting at line 567 or so which seems to depend on the
+        % scale of the input data
+        rdm = rdm * 100;
+        [y,stress,disparities] = mdscale(rdm,varargin{:});
     else
         rethrow(err);
     end
