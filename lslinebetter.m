@@ -1,19 +1,29 @@
-% Matlab's builtin lsline is strangely inflexible. This variant takes a
-% plothandle input so you can control which plots get lsline'd. Also, if
-% the collapse flag is true we compute a fit for all points regardless of
-% plot handle.
+% Matlab's builtin lsline is strangely inflexible. This variant adds a few
+% useful options.
 %
-% lhand = lslinebetter(phand,collapse)
-function lhand = lslinebetter(phand,collapse)
+% INPUTS:
+% phand: plot handle (the data that gets fitted)
+% collapse (default false): If true we compute a fit for all points
+%   regardless of plot handle.
+% xvalues (default xlim): If defined the fit is evaluated for this range.
+%   You can also set xvalues to 'adaptive', in which case the line is
+%   defined by the minimal and maximal x values.
+% [lineargs]: any additional varargin get passed to line
+%
+% lhand = lslinebetter(phand,[collapse],[xvalues],[lineargs])
+function lhand = lslinebetter(phand,collapse,xvalues,varargin)
 
 if nargin<1
   % revert to default lsline behaviour
   lhand = lsline;
 end
 
-
 if ieNotDefined('collapse')
   collapse = false;
+end
+
+if ieNotDefined('xvalues')
+    xvalues = get(get(phand(1),'parent'),'xlim');
 end
 
 lhand = [];
@@ -25,18 +35,29 @@ if collapse && n>1
     xdat = [xdat get(phand(p),'XData')];
     ydat = [ydat get(phand(p),'YData')];
   end
-  fit = polyfit(xdat,ydat,1);
-  lhand = refline(fit);
-  set(lhand,'color','k');
+  if strcmp(xvalues,'adaptive')
+      xvalues = [min(xdat) max(xdat)];
+  end
+  lhand = reflinereplace(xdat,ydat,xvalues,varargin{:});
 else
   for p = 1:n
     xdat = get(phand(p),'XData');
     ydat = get(phand(p),'YData');
-    fit = polyfit(xdat,ydat,1);
-    lhand(end+1) = refline(fit);
+    thisx = xvalues;
+    if strcmp(thisx,'adaptive')
+        thisx = [min(xdat) max(xdat)];
+    end
+    lhand(end+1) = reflinereplace(xdat,ydat,thisx,varargin{:});
     try
-        % bit ugly but this can fail if puttin a slope on e.g. bar data.
+        % bit ugly but this can fail if putting a slope on e.g. bar data.
         set(lhand(end),'color',get(phand(p),'color'));
     end
   end
 end
+
+function lh = reflinereplace(xdat,ydat,xvalues,varargin)
+% linear fit
+fit = polyfit(xdat,ydat,1);
+% predicted values
+yhat = fit(2) + fit(1) .* xvalues;
+lh = line(xvalues,yhat,varargin{:});
