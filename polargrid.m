@@ -7,14 +7,15 @@
 % ax: (default gca)
 % phi: direction of spokes in radians
 % rad: eccentricity of rings
+% maskphi: optional 2 element vector of radians to mask out from rings
 % [varargin]: any additional inputs get passed to plot for grid styling.
 %
 % OUTPUTS:
 % spokes: one plot handle per spoke
 % rings: one plot handle per ring
 %
-% [spokes,rings] = polargrid(ax,phi,rad,[varargin])
-function [spokes,rings] = polargrid(ax,phi,rad,varargin)
+% [spokes,rings] = polargrid(ax,phi,rad,maskphi,[varargin])
+function [spokes,rings] = polargrid(ax,phi,rad,maskphi,varargin)
 
 if ieNotDefined('ax')
     ax = gca;
@@ -32,7 +33,8 @@ end
 
 % first do the spokes
 maxrad = max(rad);
-np = length(phi);
+phi = phi(:);
+np = numel(phi);
 px = NaN([2,np]);
 py = NaN([2,np]);
 % all lines begin at origin
@@ -45,9 +47,16 @@ for p = 1:np
 end
 
 % then the rings
-minphi = min(phi);
-maxphi = max(phi);
-standardv = linspace(minphi,maxphi,100);
+standardv = linspace(0,2*pi,500);
+if ~ieNotDefined('maskphi')
+    if maskphi(2)<maskphi(1)
+        % need to handle wraparound
+        badind = standardv>maskphi(2) | standardv<maskphi(1);
+    else
+        badind = standardv>maskphi(1) & standardv<maskphi(2);
+    end
+    standardv(badind) = NaN;
+end
 standardx = cos(standardv);
 standardy = sin(standardv);
 
