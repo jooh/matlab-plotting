@@ -1,10 +1,12 @@
 % Plot and save RDMs and/or MDS for each RDM in data. If there's more than
 % one RDM in data, we also construct and save second-order RSM (spearman
-% rho).  each ROI, and plot a second-order MDS of distances between ROIs.
+% rho).
 %
 % NAMED INPUTS:
 % data: something that can be converted to RDM with asrdmvec
 % labels: struct array with image field (also alpha for image MDS)
+% ylabels:
+% xlabels: for custom labels on each axis
 % figdir: (default pwd)
 % cmap: (default cmap_bwr)
 % nrows: (default 2)
@@ -22,6 +24,7 @@
 % issimilarity: (default false) used to appropriately flip similarity into
 %   dissimilarity before MDS
 % greythresh: (default []) threshold for colormap grayscale conversion
+% ticklines: imageticks input
 %
 % plotrdms_batch(varargin)
 function plotrdms_batch(varargin)
@@ -30,7 +33,8 @@ getArgs(varargin,{'figdir',pwd,'cmap',cmap_bwr,'nrows',2,...
     'roinames',[],'data',[],'labels',struct('image',{}),'domds',true,...
     'dordm',true,'gridcolor',[],'ranktransform',false,'cblabel',...
     'dissimilarity','cbticklabel',[],'cbtick',[],'lims',[],...
-    'gridlines',[],'issimilarity',false,'greythresh',[]});
+    'gridlines',[],'issimilarity',false,'greythresh',[],...
+    'ylabels',[],'xlabels',[],'ticklines',0});
 
 mkdirifneeded(figdir);
 
@@ -58,8 +62,15 @@ if ranktransform && isempty(cbticklabel)
     cbticklabel = {'low','high'};
 end
 
+if isempty(ylabels)
+    ylabels = labels;
+end
+if isempty(xlabels)
+    xlabels = labels;
+end
+
 imagelabels = true;
-if ~isempty(labels) && ischar(labels(1).image)
+if ~isempty(ylabels) && ischar(ylabels(1).image)
     imagelabels = false;
 end
 
@@ -87,13 +98,24 @@ for roi = 1:nroi
         printname)),'PNG');
 
     if dordm
-        % save the RDM with labels
         F = figure;
-        mainax = subplot(2,6,[1:4 7:10]);
-        [mainax,intmap,thiscmap] = rdmplot(mainax,thisrdm,'labels',...
-            {labels.image},'nrows',nrows,'cmap',cmap,'limits',lims,...
+        % save the RDM without labels (but with other customisations)
+        mainax = gca;
+        [mainax,intmap,thiscmap] = rdmplot(mainax,thisrdm,...
+            'cmap',cmap,'limits',lims,...
             'gridcolor',gridcolor,'gridlines',gridlines,'greythresh',...
-            greythresh);
+            greythresh,'ticklines',ticklines);
+        printstandard(fullfile(figdir,sprintf('rdm_nolabel_%s',...
+            printname)));
+        clf(F);
+
+        % save the RDM with labels
+        mainax = subplot(2,6,[1:4 7:10]);
+        [mainax,intmap,thiscmap] = rdmplot(mainax,thisrdm,'xlabels',...
+            {xlabels.image},'ylabels',{ylabels.image},...
+            'nrows',nrows,'cmap',cmap,'limits',lims,...
+            'gridcolor',gridcolor,'gridlines',gridlines,'greythresh',...
+            greythresh,'ticklines',ticklines);
         printstandard(fullfile(figdir,sprintf('rdm_wlabel_%s',...
             printname)));
 
@@ -132,18 +154,18 @@ for roi = 1:nroi
             end
         end
         if imagelabels
-            outh = imageaxes(gca,xy,{labels.image},{labels.alpha});
+            outh = imageaxes(gca,xy,{xlabels.image},{xlabels.alpha});
         else
             % text labels
             set(gca,'dataaspectratio',[1 1 1]);
-            thand = textscatter(xy(:,1),xy(:,2),{labels.image});
+            thand = textscatter(xy,{xlabels.image});
             axis(axis*1.2);
         end
         axis(gca,'off');
         if imagelabels
             % mds plot really doesn't need to be eps
-            print(fullfile(figdir,sprintf('mds_%s.png',printname)),'-dpng',...
-                '-r900',['-f' num2str(F)]);
+            printstandard(fullfile(figdir,sprintf('mds_%s',printname)),...
+                'formats','png','r',900,'F',F);
         else
             % we do want EPS output
             printstandard(fullfile(figdir,sprintf('mds_%s',printname)));
@@ -152,7 +174,8 @@ for roi = 1:nroi
 
         % and diagnostic Shepard plot
         F = figure;
-        shepardPlot(thisrdm,disparities,pdist(xy),F);
+        ax = gca(F);
+        plotshepard(ax,thisrdm,disparities,pdist(xy)');
         printstandard(fullfile(figdir,sprintf(...
             'diagnostic_mds_shepard_%s',printname)),'F',F);
         close(F);
