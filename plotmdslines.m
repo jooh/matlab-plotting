@@ -7,7 +7,8 @@
 % rdm: vector, struct or matrix form
 % cmap: (default autumn) color map for line colours
 % dopolar (default false) plot polar curves between points instead
-% varargin: any valid arguments for Matlab's line function
+% varargin: any valid arguments for Matlab's line function - if cell array,
+%   pass one cell entry for each color.
 %
 % phand = plotmdslines([ax],xy,rdm,[cmap],[dopolar=false],[varargin])
 function phand = plotmdslines(ax,xy,rdm,cmap,dopolar,varargin)
@@ -28,13 +29,27 @@ if size(cmap,1) ~= nudis
     cmap = cmap(ones(nudis,1),:);
 end
 
+if isempty(varargin)
+    plotarg = cell(nudis,1);
+elseif ~iscell(varargin{1})
+    plotarg = repmat({varargin},[nudis,1]);
+else
+    plotarg = varargin;
+end
+
 % flip order so shorter dissimilarities get plotted over longer ones (this
 % tends to look better). As a bonus, you also get sensible legend behaviour
 % (descending order of dissimilarity).
 udis = udis(end:-1:1);
 cmap = cmap(end:-1:1,:);
+nd = size(xy,2);
+pos = repmat({[]},[1 nd]);
+for dis = 1:nudis
+    dpos{dis} = pos;
+end
 xpos = repmat({[]},[1 nudis]);
 ypos = repmat({[]},[1 nudis]);
+zpos = repmat({[]},[1 nudis]);
 ncon = size(xy,1);
 assert(ncon==npairs2n(ndis),'xy and rdm do not match');
 
@@ -42,7 +57,20 @@ if ieNotDefined('ax')
     ax = gca;
 end
 
+switch nd
+    case 2
+        plotter = @(p,co,varargin)plot(ax,p{1},p{2},'color',co,...
+            varargin{:});
+    case 3
+        plotter = @(p,co,varargin)plot3(ax,p{1},p{2},p{3},'color',co,...
+            varargin{:});
+        assert(~dopolar,'cannot dopolar if plotting 3d');
+    otherwise
+        error('unsupported input dimensionality: %d',nd);
+end
+
 for d = 1:ndis
+    thispos = [];
     dis = rdvec(d);
     if isnan(dis)
         continue
@@ -54,20 +82,20 @@ for d = 1:ndis
     [r,c] = ind2sub([ncon ncon],find(logmat(:)));
     % polar?
     if dopolar
-        [xp,yp] = polarpoints(xy(r,1),xy(r,2),5000);
+        [thispos(:,1),thispos(:,2)] = polarpoints(xy(r,1),xy(r,2),5000);
     else
-        xp = xy(r,1);
-        yp = xy(r,2);
+        thispos = xy(r,:);
     end
-    xpos{udis==dis} = [xpos{udis==dis}; NaN; xp];
-    ypos{udis==dis} = [ypos{udis==dis}; NaN; yp];
+    for dim = 1:nd
+        dpos{udis==dis}{dim}= [dpos{udis==dis}{dim}; NaN; thispos(:,dim)];
+    end
 end
 
 washold = ishold(ax);
 hold(ax,'on');
 for u = 1:nudis
     color = cmap(u,:);
-    phand(u) = plot(ax,xpos{u},ypos{u},'color',color,varargin{:});
+    phand(u) = plotter(dpos{u},color,plotarg{u}{:});
 end
 if ~washold
     hold(ax,'off');
