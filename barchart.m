@@ -11,19 +11,20 @@
 %   yshape for non-symmetrical bars, e.g. confidence intervals (we subtract
 %   mean from each before passing to errorbar)
 % pvalues: we plot all p values so threshold before calling this
-% pstyle: 'marker' or 'text'
+% pstyle: 'marker' or {'text'}
 % rotatelabels: default 45 - only applied to string xlabels
 % fighand: default [] - if defined, we plot to this figure instead of
 %   making a new one.
 % pad: default .5 - xlim padding on either side of bars. 
 % plotbaseline: default true
+% width: default .6 if single group, 1 if grouped
 %
-% [fighand,barhand,errs] = barchart(y,varargin)
-function [fighand,B,E] = barchart(y,varargin)
+% [fighand,barhand,errs,ptext] = barchart(y,varargin)
+function [fighand,B,E,t] = barchart(y,varargin)
 
 getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'errorcolor',[0 0 0],'width',[],'errors',[],'rotatelabels',45,...
-    'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','marker',...
+    'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','text',...
     'plotbaseline',true,'errorwidth',.5});
 
 if isempty(fighand)
@@ -144,7 +145,9 @@ if ~isempty(pvalues) && ~all(isnan(pvalues(:)))
         case 'marker'
             t = addpstars(gca,xerr(:)',pvalues(:)',[],'ypos',ypos);
         case 'text'
-            t = addptext(xerr(:),ypos,pvalues(:),gca);
+            % now position on top of chart
+            texty = max(ylim) + range(ylim)*.1;
+            t = addptext(xerr(:),texty,pvalues(:),3,'p=','rotation',45);
         otherwise
             error('unknown pstyle: %s',pstyle);
     end
@@ -153,8 +156,8 @@ end
 xlim([x(1)-pad x(end)+pad]);
 if plotbaseline
     % replot 0 line since Matlab usually messes this up
-    lh=line(xlim,[0 0],'linewidth',1.2,'color',[0 0 0]);
-    uistack(lh,'top');
+    lh=line(xlim,[0 0],'linewidth',.5,'color',[0 0 0],'linestyle',':');
+    uistack(lh,'bottom');
     % also insure axis limits are on top of bars - both these are necessary
     % when 0 point is not at xlim(1) 
     set(gca,'layer','top');
