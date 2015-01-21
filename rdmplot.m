@@ -1,15 +1,17 @@
 % Plot RDM panel with labels. NaN dissimilarities get coloured white, as
 % does the diagonal. We plot with a custom colormap conversion to support
 % vector graphics (rather than using the alpha channel to remove NaNs,
-% which is incompatible with the painters renderer).
+% which is incompatible with the painters renderer). Wraps imageplot.
 %
 % INPUTS:
 % ax: (default gca) axis handle
 % rdm: a single valid RDM in mat, vector or struct form
 %
 % NAMED INPUTS (all optional):
+% doranktrans: (default false) true to rank transform before plotting.
 % labels: cell array of text or image labels
-% imagealpha: cell array of alpha images for image labels
+% ylabels: for imageticks
+% xlabels: for imageticks
 % nrows: (default 2) number of rows for image stacking
 % cmap: (default cmap_bwr) colormap
 % rotatelabels: (default 90) rotate text xticklabels
@@ -18,11 +20,13 @@
 % collapsesplitrdm: (default false) plot only lower left quadrant of split
 %   data RDM (currently unsupported)
 % limits: for colormap intensity range
-% gridlines: (default [])
-% gridcolor: (default []) if set, we plot a grid with this colour. If
-%   gridlines is set, gridcolor defaults to [1 1 1]
+% gridlines: (default []) if set, we overlay a grid in gridcolor
+% gridcolor: (default [1 1 1]) 
 % greythresh: (default []) if set, convert intensities under threshold to
 %   muted greyscale
+% ticklines: imageticks input
+% upscale: default 'auto') if set, upscale the pixels by some factor (see
+%   imageplot)
 %
 % OUTPUTS:
 % ax: axis handle
@@ -32,9 +36,11 @@
 % [ax,intmap,cmap] = rdmplot(ax,rdm,varargin)
 function [ax,intmap,cmap] = rdmplot(ax,rdm,varargin)
 
-getArgs(varargin,{'labels',[],'imagealpha',[],'nrows',2,'cmap',cmap_bwr,...
-    'rotatelabels',90,'collapseunused',false,'collapsesplitrdm',false,...
-    'limits',[],'gridcolor',[],'gridlines',[],'greythresh',[]});
+getArgs(varargin,{'labels',[],'nrows',2,'cmap',cmap_bwr,...
+    'rotatelabels',45,'collapseunused',false,'collapsesplitrdm',false,...
+    'limits',[],'gridcolor',[1 1 1],'gridlines',[],'greythresh',[],...
+    'doranktrans',0,'xlabels',[],'ylabels',[],'ticklines',0,'upscale',...
+    'auto'});
 
 if nargin==1
     % special single input mode
@@ -44,12 +50,6 @@ end
 
 if ieNotDefined('ax')
     ax = gca;
-end
-
-
-
-if ~isempty(gridlines) && isempty(gridcolor)
-    gridcolor = [1 1 1];
 end
 
 rdmmat = asrdmmat(rdm);
@@ -73,24 +73,38 @@ if collapseunused
 end
 
 if collapsesplitrdm && issplitdatardm(rdmmat)
-    error('currently unsupported');
-    goodcol = ~isnan(rdmmat(:,1));
-    goodrow = ~isnan(rdmmat(1,:));
-    rdmmat = rdmmat(goodrow,goodcol);
+    rowind = rowind(ncon/2+1:ncon);
+    colind = colind(1:ncon/2);
+    rdmmat = rdmmat(rowind,colind);
     if ~isempty(labels)
-        rowlabels = labels(goodrow);
-        collabels = labels(goodcol);
+        rowlabels = labels(rowind);
+        collabels = labels(colind);
     end
     whitediagonal = false;
-    rowind = rowind(goodrow);
-    colind = colind(goodcol);
 else
     rowlabels = labels;
     collabels = labels;
+    if ~isempty(xlabels)
+        collabels = xlabels;
+    end
+    if ~isempty(ylabels)
+        rowlabels = ylabels;
+    end
     whitediagonal = true;
 end
 % update ncon
 ncon = size(rdmmat,1);
+
+if doranktrans
+    if whitediagonal
+        rdmmat = asrdmmat(ranktrans(asrdmvec(rdmmat)));
+    else
+        % split data RDM
+        rdmmat = reshape(ranktrans(rdmmat(:)),[ncon ncon]);
+    end
+    assert(isempty(limits),'if doranktrans, limits must be undefined');
+    assert(isempty(greythresh),'if doranktrans, greythresh must be undefined');
+end
 
 % convert to RGB with white diagonal
 [im,intmap,cmap] = intensity2rgb(rdmmat,cmap,limits,greythresh);
@@ -99,40 +113,7 @@ if whitediagonal
     im(diagind(size(im))) = 1;
 end
 
-image(im,'parent',ax);
-set(ax,'xlim',[.5 ncon+.5],'ylim',[.5 ncon+.5],'xtick',1:ncon,...
-    'ytick',1:ncon,'tickdir','out');
-
-% sort out x/y labels
-if isempty(labels)
-    % probably don't want axis display. But we set labels anyway so you can
-    % see collapse behaviours
-    set(ax,'xticklabel',colind,'yticklabel',rowind);
-    axis(ax,'off');
-elseif isnumeric(labels) || ischar(labels) || (iscell(labels) && ischar(labels{1}))
-    % text labels
-    set(ax,'xticklabel',collabels,'yticklabel',rowlabels);
-    if ~isempty(rotatelabels) && rotatelabels~=0
-        rotateXLabels(ax,rotatelabels);
-    end
-elseif iscell(labels) && ~isempty(labels{1})
-    % image labels
-    if isequal(rowlabels,collabels)
-        h = imageticks(ax,rowlabels,nrows,[1 2],imagealpha);
-    else
-        h = imageticks(ax,rowlabels,nrows,2,imagealpha);
-        h = imageticks(ax,collabels,nrows,1,imagealpha);
-    end
-else
-    error('could not parse input: labels')
-end
-box(ax,'off');
-set(ax,'dataaspectratio',[1 1 1]);
-
-if ~isempty(gridcolor)
-    if isempty(gridlines)
-        gridlines = 0:ncon;
-    end
-    [x,y] = meshgrid(gridlines+.5,[.5 ncon+.5]);
-    gridh = line([x y],[y x],'linewidth',.5,'color',gridcolor);
-end
+imageplot(ax,im,'nrows',nrows,'rotatelabels',rotatelabels,...
+    'gridcolor',gridcolor,...
+    'gridlines',gridlines,'rowlabels',rowlabels,'collabels',collabels,...
+    'ticklines',ticklines,'upscale',upscale);
