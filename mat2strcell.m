@@ -4,14 +4,14 @@
 % v - numeric array
 % strtemp - a sprintf str with a % flag that determines format for v
 % (default '%d')
-% c = vec2str(v,str)
-function c = vec2str(v,strtemp)
+% c = mat2strcell(v,str)
+function c = mat2strcell(v,strtemp)
 
 if ieNotDefined('strtemp')
     strtemp = '%d';
 end
 
-c = strsplit(sprintf('-*-%.3f',v),'-*-');
+c = strsplit(sprintf(['-*-' strtemp],v),'-*-');
 % first entry is the initial blank
 c(1) = [];
 c = reshape(c,size(v));
