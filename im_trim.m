@@ -8,8 +8,8 @@
 % outim: trimmed image or cell array of images
 % mask: 2D logical mask in shape of original image
 %
-% [outim,mask] = im_trim(inim,trimcolor,[medfiltsize])
-function [outim,groupmask] = im_trim(inim,trimcolor,medfiltsize)
+% [outim,mask] = im_trim(inim,trimcolor)
+function [outim,groupmask] = im_trim(inim,trimcolor)
 
 wascell = true;
 if ~iscell(inim)
