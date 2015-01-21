@@ -72,9 +72,9 @@ end
 iptsetpref('ImshowBorder','tight');
 
 sysfonts = lower(listfonts);
-if findStrInArray(sysfonts,'helvetica',1);
+if any(strcmp(sysfonts,'helvetica'))
     fon = 'helvetica';
-elseif findStrInArray(sysfonts,'arial',1);
+elseif any(strcmp(sysfonts,'arial'))
     fon = 'arial';
 else
     error('Cannot find helvetica or arial on system')
@@ -89,7 +89,7 @@ set(F,'color',[1 1 1],... % white BG
   'units','centimeters',...
   'position',[0 0 figsize],... % use same units for figure and paper
   'defaultaxescolor',[1 1 1],... % white axes bg
-  'defaultlinelinewidth',2,... % thicker lines
+  'defaultlinelinewidth',1,... 
   'defaultaxesfontname',fon,... 
   'defaultaxesfontsize',7,... 
   'defaultuicontrolfontname',fon,...
