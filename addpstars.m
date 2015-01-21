@@ -28,8 +28,6 @@ if all(isnan(pmat(:)) | pmat(:) > sigthresh)
     return;
 end
 
-
-
 xs = xs(~isnan(xs));
 nx = size(pmat,2);
 np = size(pmat,1);
@@ -51,7 +49,8 @@ for x = 1:size(pmat,2)
     end
   end
 end
-t = text(xs(~isnan(ypos)),ypos(~isnan(ypos)),pstr,'verticalalignment',...
-  verticalalignment,'horizontalalignment',horizontalalignment,...
+t = text(double(xs(~isnan(ypos))),double(ypos(~isnan(ypos))),pstr,...
+    'verticalalignment',verticalalignment,...
+    'horizontalalignment',horizontalalignment,...
     'fontsize',fontsize,...
     'fontweight','bold','parent',ax);
