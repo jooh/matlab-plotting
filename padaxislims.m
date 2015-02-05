@@ -5,28 +5,36 @@
 %
 % NAMED INPUTS  DEFAULT                 DESCRIPTION
 % ax            gca                     axis to target
-% axdir         y                       direction (x,y,z)
+% axdir         y                       direction (x,y,z or xy)
 % padprop       .05                     padding - proportion of range(lims)
 % lims          get(ax,[axdir 'lim'])   data limits [min,max]
-% precision     1                       number of digits precision
 %
 % paxaxislims(varargin)
 function paxaxislims(varargin)
 
-getArgs(varargin,{'ax',gca,'axdir','y','padprop',.05,'lims',[],...
-    'precision',1});
+getArgs(varargin,{'ax',gca,'axdir','y','padprop',.05,'lims',[]});
 
-if ieNotDefined('lims')
-    lims = get(ax,[axdir 'lim']);
+if strcmp(axdir,'xy')
+    if ieNotDefined('lims')
+        lims = axis(ax);
+    end
+    if isvector(lims)
+        lims = reshape(lims,[2 2]);
+    end
+else
+    if ieNotDefined('lims')
+        lims = get(ax,[axdir 'lim'])';
+    end
 end
 
 axrange = range(lims);
+padval = axrange*padprop/2;
 
-% for the min, it's down
-newlims(1) = reduceprecision((2*(lims(1)>0)-1) .* (abs(lims(1)) - ...
-    (axrange*padprop/2)),precision,@floor);
-% and for the max, it's up
-newlims(2) = reduceprecision((2*(lims(2)>0)-1) .* (abs(lims(2)) + ...
-    (axrange*padprop/2)),precision,@ceil);
+% so now it's just
+newlims = lims + [-padval; padval];
 
-set(ax,[axdir 'lim'],newlims);
+if strcmp(axdir,'xy')
+    axis(ax,newlims(:));
+else
+    set(ax,[axdir 'lim'],newlims);
+end
