@@ -1,4 +1,4 @@
-% Wrapper for plotrdms to create a panel figure.
+% Wrapper for rdmplot to create a panel figure.
 %
 % INPUTS    DEF DESCRIPTION
 % rdm           some pilab-compatible mat, vec or struct array
@@ -7,7 +7,7 @@
 % dims      []  dimensions of subplot (we infer if undefined)
 % fighand   []  existing figure handle (we make a new figure if undefined)
 %
-% all additional [varargin] are passed on to plotrdms.
+% all additional [varargin] are passed on to rdmplot.
 %
 % [fighand,ax,intmap,cmap] = rdmfig(rdm,names,dims,fighand,varargin)
 function [fighand,ax,intmap,cmap] = rdmfig(rdm,names,dims,fighand,varargin)
