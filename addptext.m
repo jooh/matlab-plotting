@@ -32,4 +32,5 @@ T = NaN(sx);
 notnan = ~isnan(x);
 
 % weird bug - text fails with single class inputs
-T(notnan) = text(double(x(notnan)),double(y(notnan)),pstr,varargin{:});
+T(notnan) = text(double(x(notnan)),double(y(notnan)),pstr(notnan),...
+    varargin{:});
