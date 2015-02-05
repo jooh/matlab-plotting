@@ -97,7 +97,7 @@ if autolim
     % factor since Matlab doesn't consistently render images close to axis
     % limits, even with clipping off.
     % go back to height scale from axis
-    imhs = imheight / maxax;
-    axis(ax,[min(xy(:,1)) max(xy(:,1)) min(xy(:,2)) max(xy(:,2))] .* ...
-        (1+imhs+.3));
+    imhs = [imheight / maxax] + .3;
+    padaxislims('ax',ax,'axdir','xy','padprop',imhs,'lims',...
+        [min(xy);max(xy)]);
 end
