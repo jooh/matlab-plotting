@@ -1,8 +1,8 @@
-% set with NaN support - convenient shorthand for constructions like
-% set(hand(~isnan(hand)),... See also isequaln, uniquen.
+% delete with NaN support. See also isequaln, uniquen, setn.
 %
-% setn(hand,varargin)
-function setn(hand,varargin)
+% deletn(hand)
+function deleten(hand)
 
 nanmask = isnan(hand);
-set(hand(~nanmask),varargin{:});
+% vectorise because delete isn't entirely robust to unusually-sized inputs
+delete(ascol(hand(~nanmask)));
