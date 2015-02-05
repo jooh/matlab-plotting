@@ -1,13 +1,23 @@
 % convert a 2D intensity image to RGB values according to colormap cmap.
 %
-% cmat details to cmap_bwr.
-%
 % imshow(im) produces identical graphical output to imagesc(mat) if the
 % colormap contains the same number of entries as the number of unique
 % intensities in mat. If this is not the case there will be minor
 % divergences due to different interpolation, but for any sensible
 % colormap these divergences will be very small. To minimise any confusion
-% it is always safest to make your own colorbar.
+% it is always safest to use this function with colorbarbetter when
+% plotting.
+%
+% INPUT     DEFAULT     DEFINITION
+% mat       -           some 2d numerical matrix
+% cmap      cmap_bwr    color map
+% limits    []          clipping limits for map (2 element vector). If
+%                           undefined we use the data limits. If set to
+%                           'symmetrical', we balance the positive and
+%                           negative color range by setting the limits to
+%                           [-absmax +absmax]
+% greythresh -Inf      values below this threshold are converted to
+%                           greyscale
 %
 % [im,intmap,cmap] = intensity2rgb(mat,[cmap],[limits],[greythresh])
 function [im,intmap,cmap] = intensity2rgb(mat,cmap,limits,greythresh)
@@ -27,6 +37,11 @@ nu = length(umat);
 
 if ieNotDefined('cmap')
     cmap = cmap_bwr;
+end
+
+if strcmp(limits,'symmetrical')
+    m = max(abs(mat(:)));
+    limits = [-m m];
 end
 
 if ieNotDefined('limits')
