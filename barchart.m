@@ -18,14 +18,15 @@
 % pad: default .5 - xlim padding on either side of bars. 
 % plotbaseline: default true
 % width: default .6 if single group, 1 if grouped
+% pcontrasts: if present, we pass on this p matrix to contrastlines
 %
-% [fighand,barhand,errs,ptext] = barchart(y,varargin)
-function [fighand,B,E,t] = barchart(y,varargin)
+% [fighand,barhand,errs,ptext,conhand] = barchart(y,varargin)
+function [fighand,B,E,t,conlines] = barchart(y,varargin)
 
 getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'errorcolor',[0 0 0],'width',[],'errors',[],'rotatelabels',45,...
     'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','text',...
-    'plotbaseline',true,'errorwidth',.5});
+    'plotbaseline',true,'errorwidth',.5,'pcontrasts',[]});
 
 if isempty(fighand)
     fighand = figurebetter('medium');
@@ -151,6 +152,13 @@ if ~isempty(pvalues) && ~all(isnan(pvalues(:)))
         otherwise
             error('unknown pstyle: %s',pstyle);
     end
+end
+
+if ~isempty(pcontrasts)
+    % this reshape should restore the correct condition order
+    [conlines,ypos,xy] = contrastlines(gca,pcontrasts,'xpos',...
+        reshape(xerr',[numel(xerr) 1]),...
+        'ypos',max(ylim));
 end
 
 xlim([x(1)-pad x(end)+pad]);
