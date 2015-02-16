@@ -39,13 +39,16 @@ if ieNotDefined('cmap')
     cmap = cmap_bwr;
 end
 
-if strcmp(limits,'symmetrical')
-    m = max(abs(mat(:)));
-    limits = [-m m];
-end
-
 if ieNotDefined('limits')
     limits = [min(mat(:)) max(mat(:))];
+elseif strcmp(limits,'symmetrical')
+    m = max(abs(mat(:)));
+    limits = [-m m];
+elseif strcmp(limits,'zerobounded')
+    m = max(mat(:));
+    assert(m>0,...
+        'zerobounded is only possible if there are positive values');
+    limits = [0 m];
 end
 
 if ieNotDefined('nancolor')
