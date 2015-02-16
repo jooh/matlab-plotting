@@ -7,8 +7,8 @@
 %                           rescale to include it
 % precision     1       number of decimal points
 % 
-% roundplotlimits(ax,axdir,specialvalue,precision)
-function roundplotlimits(ax,axdir,specialvalue,precision)
+% outlim = roundplotlimits(ax,axdir,specialvalue,precision)
+function outlim = roundplotlimits(ax,axdir,specialvalue,precision)
 
 if ieNotDefined('ax')
     ax = gca;
@@ -26,6 +26,7 @@ if ieNotDefined('specialvalue')
     specialvalue = NaN;
 end
 
+outlim = [];
 for thisax = ax(:)'
     for thisdir = axdir(:)'
         lim = get(thisax,[thisdir 'lim']);
@@ -39,4 +40,5 @@ for thisax = ax(:)'
         end
         set(thisax,[thisdir 'lim'],lim);
     end
+    outlim = [outlim lim];
 end
