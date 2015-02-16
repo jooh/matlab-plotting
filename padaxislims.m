@@ -9,8 +9,8 @@
 % padprop       .05                     padding - proportion of range(lims)
 % lims          get(ax,[axdir 'lim'])   data limits [min,max]
 %
-% paxaxislims(varargin)
-function paxaxislims(varargin)
+% newlims = paxaxislims(varargin)
+function newlims = paxaxislims(varargin)
 
 getArgs(varargin,{'ax',gca,'axdir','y','padprop',.05,'lims',[]});
 
@@ -23,8 +23,9 @@ if strcmp(axdir,'xy')
     end
 else
     if ieNotDefined('lims')
-        lims = get(ax,[axdir 'lim'])';
+        lims = get(ax,[axdir 'lim']);
     end
+    lims = lims(:);
 end
 
 axrange = range(lims);
