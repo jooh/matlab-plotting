@@ -8,7 +8,17 @@ function lims = getdatalims(h,dim)
 
 lims = [];
 for d = dim(:)'
-    dimdata = get(h(~isnan(h)),[d 'data']);
+    validh = h(~isnan(h));
+    % keep track of handle types - we can only play this game with some
+    % types
+    datah = validh;
+    htype = get(validh,'type');
+    badind = ismember(htype,{'axes','figure','text'}) ~= 0;
+    datah(badind) = [];
+    dimdata = get(datah,[d 'data']);
+    if ~iscell(dimdata) && ~isempty(dimdata)
+        dimdata = {dimdata};
+    end
     currentmin = Inf;
     currentmax = -Inf;
     for dat = dimdata(:)'
@@ -17,8 +27,8 @@ for d = dim(:)'
         currentmin(thismin<currentmin) = thismin;
         currentmax(thismax>currentmax) = thismax;
     end
-    % recurse into children
-    children = get(h(~isnan(h)),'children');
+    % recurse into children - nb here we do use any axes of figure inputs
+    children = get(validh,'children');
     if iscell(children)
         children = cat(1,children{:});
     end
