@@ -30,7 +30,7 @@ outlim = [];
 for thisax = ax(:)'
     for thisdir = axdir(:)'
         lim = get(thisax,[thisdir 'lim']);
-        lim = [reduceprecision(lim(1),precision,@floor) ...
+        lim = [reduceprecision(lim(1),precision,@fix) ...
             reduceprecision(lim(2),precision,@ceil)];
         if lim(2)<specialvalue
             lim(2) = specialvalue;
