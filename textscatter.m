@@ -57,6 +57,8 @@ end
 if plotmarker
     halign = 'right';
     valign = 'bottom';
+    % add space to clear the marker
+    t = cellfun(@(thist)[thist '  '],t,'uniformoutput',0);
 else
     halign = 'center';
     valign = 'middle';
@@ -65,11 +67,13 @@ end
 % handle 2D or 3D plots
 switch nd
     case 2
-        plotter = @(p,co)plot(p(:,1),p(:,2),'.','color',co);
+        plotter = @(p,co)plot(p(:,1),p(:,2),'o','markerfacecolor',co,...
+            'markeredgecolor','none');
         texter = @(p,t,co)text(p(:,1),p(:,2),t,'horizontalalignment',...
             halign,'verticalalignment',valign,'color',co);
     case 3
-        plotter = @(p,co)plot3(p(:,1),p(:,2),p(:,3),'.','color',co);
+        plotter = @(p,co)plot3(p(:,1),p(:,2),p(:,3),'o',...
+            'markerfacecolor',co,'markeredgecolor','none');
         texter = @(p,t,co)text(p(:,1),p(:,2),p(:,3),t,...
             'horizontalalignment',halign,'verticalalignment',valign,...
             'color',co);
@@ -103,6 +107,9 @@ else
         end
     end
 end
+
+% we assume you want the text on top
+uistack(thand,'top')
 
 if changedhold
     hold off;
