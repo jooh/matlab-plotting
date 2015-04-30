@@ -7,18 +7,17 @@
 % prefix: optional prefix to add to each (e.g., 'p=' - default '')
 % [varargin]: any additional varargin are passed to text
 %
-% T = addptext(x,y,p,[precision],[prefix],[textargs])
-function T = addptext(x,y,p,precision,prefix,varargin)
+% T = addptext(x,y,p,[precision],[doprefix],[textargs])
+function T = addptext(x,y,p,precision,doprefix,varargin)
 
 if ieNotDefined('precision')
     precision = 3;
 end
-
-pstr = p2str(p,precision);
-
-if ~ieNotDefined('prefix')
-    pstr = cellfun(@(thisp)[prefix thisp],pstr,'uniformoutput',0);
+if ~ieNotDefined('doprefix')
+    doprefix = true;
 end
+
+pstr = p2str(p,precision,doprefix);
 
 sy = size(y);
 sx = size(x);
