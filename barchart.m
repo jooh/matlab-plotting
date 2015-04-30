@@ -28,6 +28,8 @@ getArgs(varargin,{'labels',[],'edgecolor','none','facecolor',[.6 .6 .6],...
     'x',[],'fighand',[],'pad',.5,'pvalues',[],'pstyle','text',...
     'plotbaseline',true,'errorwidth',.5,'pcontrasts',[]});
 
+t = [];
+conlines = [];
 if isempty(fighand)
     fighand = figurebetter('medium');
 end
