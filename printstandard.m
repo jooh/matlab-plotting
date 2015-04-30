@@ -1,14 +1,21 @@
-% Print a figure as PNG and EPS, trim whitespace post-print
+% Print a figure as PNG and EPS, trim whitespace post-print. We use -depsc2
+% which provides nice cropped white space outputs by default, and use
+% ImageMagick's convert function to trim PNGs similarly.
+%
+% INPUT:
 % fnbase - path and filename (with or without extension - we strip)
-% F - figure handle. Optional.
-% r - resolution (dpi). Defaults to 600.
-% formats - print outputs. Defaults to {'png','eps'}.
-% forcepainters - always print with painters. Default 0.
-% Dependencies: convert (from ImageMagick)
+%
+% NAMED INPUTS:
+% F         gcf         figure handle 
+% r         600         resolution (dpi)
+% formats   {'eps'}     print outputs - can be 'eps', 'png' or both in cell
+% forcepainters 0       always print with painters regardless of renderer
+% loose     0           add the -loose flag go depsc2 print
+%
 % printstandard(fnbase,varargin)
 function printstandard(fnbase,varargin);
 
-getArgs(varargin,{'F',gcf,'formats',{'png','eps'},...
+getArgs(varargin,{'F',gcf,'formats',{'eps'},...
     'r',600,'forcepainters',0,'loose',false});
 
 formstruct = struct('png','-dpng','eps','-depsc2');
@@ -37,6 +44,7 @@ if ~iscell(formats)
 end
 for f = formats(:)'
     fstr = f{1};
+    assert(isfield(formstruct,fstr),'format: %s is not supported',fstr);
     args{2} = formstruct.(fstr);
     print([fnbase '.' fstr],args{:});
 end
