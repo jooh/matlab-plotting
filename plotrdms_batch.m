@@ -189,7 +189,9 @@ if nroi > 1
     % this is pretty shocking, but when run in this mode, corr doesn't
     % necessarily output a symmetrical correlation matrix (divergences will
     % be small but consistent)!
-    rsm = (rsm + permute(rsm,[2 1])) ./ 2;
+    % Also, if one dissimilarity is NaN (e.g. because it's a constant),
+    % Matlab helpfully sets the diagonal to NaN as well
+    rsm = zerodiagonal((rsm + permute(rsm,[2 1])) ./ 2);
     % recurse!
     plotrdms_batch('data',rsm,'labels',rdmstim,'figdir',figdir,...
         'cmap',cmap_bwr,'roinames',{'secondorder rsm'},...
