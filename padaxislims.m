@@ -8,11 +8,14 @@
 % axdir         y                       direction (x,y,z or xy)
 % padprop       .05                     padding - proportion of range(lims)
 % lims          get(ax,[axdir 'lim'])   data limits [min,max]
+% specialvalue  0                       when one of the lims is this, we
+%                                           don't pad
 %
-% newlims = paxaxislims(varargin)
-function newlims = paxaxislims(varargin)
+% newlims = padaxislims(varargin)
+function newlims = padaxislims(varargin)
 
-getArgs(varargin,{'ax',gca,'axdir','y','padprop',.05,'lims',[]});
+getArgs(varargin,{'ax',gca,'axdir','y','padprop',.05,'lims',[],...
+    'specialvalue',0});
 
 if strcmp(axdir,'xy')
     if ieNotDefined('lims')
@@ -31,8 +34,13 @@ end
 axrange = range(lims);
 padval = axrange*padprop/2;
 
+padneg = -padval;
+padpos = padval;
+padneg(lims==specialvalue) = 0;
+padpos(lims==specialvalue) = 0;
+
 % so now it's just
-newlims = lims + [-padval; padval];
+newlims = lims + [padneg; padpos];
 
 if strcmp(axdir,'xy')
     axis(ax,newlims(:));
