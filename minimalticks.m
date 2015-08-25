@@ -2,7 +2,7 @@
 % (default gxa). We will set ticks for the values at the min/max and a
 % scalar specialvalue if present (default 0). Supports multiple axis
 % inputs and multiple directions (i.e., axdir='xy'). If precision is
-% defined we round the tick marks to this number of decimal points.
+% undefined we find a precision based on the axis.
 %
 % minimalticks(ax,axdir,specialvalue,precision)
 function minimalticks(ax,axdir,specialvalue,precision)
@@ -20,7 +20,7 @@ if ieNotDefined('specialvalue')
 end
 
 if ieNotDefined('precision')
-    precision = Inf;
+    precision = [];
 end
 
 for thisax = ax(:)'
@@ -31,12 +31,15 @@ for thisax = ax(:)'
         if specialvalue>lim(1) && specialvalue<lim(2)
             v = [v(1) specialvalue v(2)];
         end
-
+        thisprec = precision;
+        if isempty(thisprec)
+            thisprec = findprecision(v);
+        end
 
         set(thisax,[thisdir 'lim'],lim,[thisdir 'tick'],v);
 
         if ~isinf(precision)
-            vstr = mat2strcell(v,['%.' num2str(precision,'%.0f') 'f']);
+            vstr = mat2strcell(v,['%.' num2str(thisprec,'%.0f') 'f']);
             set(thisax,[thisdir 'ticklabel'],vstr);
         end
     end
