@@ -1,7 +1,8 @@
 % find the limits of the data (using e.g. get(h,'ydata')) along dim, which
 % can be a vector for multiple returns (e.g. 'xy' returns a [1 4] vector
 % that can be entered into axis). Recurses into children of each handle and
-% ignores NaNs.
+% ignores NaNs, invisible objects, and objects with the tag
+% 'getdatalims=0'.
 %
 % lims = getdatalims(h,dim)
 function lims = getdatalims(h,dim)
@@ -13,7 +14,10 @@ for d = dim(:)'
     % types
     datah = validh;
     htype = get(validh,'type');
-    badind = ismember(htype,{'axes','figure','text'}) ~= 0;
+    hvis = get(validh,'visible');
+    htag = get(validh,'tag');
+    badind = ismember(htype,{'axes','figure','text'}) ~= 0 | ...
+        strcmp(hvis,'off') | strcmp(htag,'getdatalims=0');
     datah(badind) = [];
     dimdata = get(datah,[d 'data']);
     if ~iscell(dimdata) && ~isempty(dimdata)
