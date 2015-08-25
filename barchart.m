@@ -150,7 +150,7 @@ if ~isempty(pvalues) && ~all(isnan(pvalues(:)))
         case 'text'
             % now position on top of chart
             texty = max(ylim) + range(ylim)*.1;
-            t = addptext(xerr(:),texty,pvalues(:),3,'p=','rotation',45);
+            t = addptext(xerr(:),texty,pvalues(:),3,true,'rotation',45);
         otherwise
             error('unknown pstyle: %s',pstyle);
     end
