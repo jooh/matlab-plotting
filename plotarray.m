@@ -30,7 +30,10 @@ if ~isequal(sx,sy)
 end
 
 outh = NaN(sy);
-for h = find(~isnan(y))'
+for h = 1:prod(sy)
+    if isnan(x(h)) || isnan(y(h))
+        continue;
+    end
     outh(h) = plot(x(h),y(h),plotarg{:});
 end
 if ~washold
