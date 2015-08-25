@@ -1,39 +1,31 @@
-% Add origin lines to the current axis. Scales with x/ylim so set these
-% first.
-% p = plotOrigin([ax])
-function p = plotOrigin(ax)
+% Add origin lines to the axis ax (default gca). Scales with x/ylim so set
+% these first. Any varargin are passed as inputs to line. The defaults are
+% {'linestyle',':','color',[0 0 0],'linewidth',.5}.
+%
+% p = plotorigin([ax],[varargin])
+function p = plotorigin(ax,varargin)
 
 if ieNotDefined('ax')
-  ax = gca;
+    ax = gca;
 end
 
-washold = ishold(ax);
-
-if ~washold
-  hold on
+args = varargin;
+if isempty(args)
+    args = {'linestyle',':','color',[0 0 0],'linewidth',.5};
 end
 
-xl = get(ax,'xlim');
-yl = get(ax,'ylim');
-
-xlp = xl;
-ylp = yl;
-
-% We use multiplicative scaling so ensure these are something sensible
-xlp(2) = max([xl(2) 1]);
-ylp(2) = max([yl(2) 1]);
-xlp(1) = min([xl(1) -1]);
-ylp(1) = min([yl(1) -1]);
-
-% Ensure well outside xlim/ylim
-xlp = xlp*100;
-ylp = ylp*100;
-
-p = plot([xlp(1) 0; xlp(2) 0],[0 ylp(1); 0 ylp(2)],'k:','linewidth',1);
-
-set(ax,'xlim',xl,'ylim',yl);
-
-% Return with same hold state
-if ~washold
-  hold off
+dims = {'x','y'};
+toplot.x = [];
+toplot.y = [];
+for thisdim = {'x','y'}
+    notd = setdiff(dims,thisdim);
+    lim = get(ax,[thisdim{1} 'lim']);
+    if min(lim) < 0 && max(lim) > 0
+        % need to plot this dim
+        toplot.(thisdim{1}) = [toplot.(thisdim{1}) zeros(2,1)];
+        toplot.(notd{1}) = [toplot.(notd{1}) get(ax,[notd{1} 'lim'])'];
+    end
 end
+
+p = line(toplot.x,toplot.y,args{:});
+uistack(p(:),'bottom');
