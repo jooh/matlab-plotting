@@ -33,3 +33,6 @@ notnan = ~isnan(x);
 % weird bug - text fails with single class inputs
 T(notnan) = text(double(x(notnan)),double(y(notnan)),pstr(notnan),...
     varargin{:});
+
+set(T(p(notnan)<0.05),'fontangle','normal','fontweight','bold');
+set(T(p(notnan)>0.05),'fontangle','italic','fontweight','normal');
