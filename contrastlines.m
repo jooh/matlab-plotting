@@ -10,6 +10,8 @@
 % xpos          1:size(pmat,1)          position of each point
 % yshift        range(ylim(ax))*.07     amount of shift between each row of
 %                                           lines
+% xshiftprop    .01                     shift between lines on the same row
+%                                           as a proportion of x range
 %
 % OUTPUT
 % lhand     row vector with handles to each line (NaN rows for NaN pmats)
@@ -29,7 +31,7 @@ ncon = size(pmat,1);
 assert(isrdm(pmat),'input must be a valid RDM');
 
 getArgs(varargin,{'ypos',max(ylim(ax)),'xpos',1:ncon,'yshift',...
-    range(ylim(ax))*.07});
+    range(ylim(ax))*.07,'xshiftprop',.02});
 
 cap = yshift/2;
 
@@ -46,7 +48,7 @@ xe = xpos(xend);
 nline = numel(ind);
 
 xrange = range([min(xs) max(xe)]);
-xoff = xrange * .01;
+xoff = xrange * xshiftprop;
 
 % every entry in linemat is a line _between_ two points (hence -1)
 linemat = NaN([1,numel(xpos)-1]);
@@ -86,4 +88,4 @@ end
 [~,reverseind] = sort(ind);
 lhand = lhand(reverseind);
 xy = xy(reverseind,:);
-ypos = max(ypos);
+ypos = max(ypos(:));
