@@ -28,17 +28,21 @@ end
 
 outlim = [];
 for thisax = ax(:)'
+    axlim = [];
     for thisdir = axdir(:)'
         lim = get(thisax,[thisdir 'lim']);
-        lim = [reduceprecision(lim(1),precision,@fix) ...
+        lim = [reduceprecision(lim(1),precision,@floor) ...
             reduceprecision(lim(2),precision,@ceil)];
-        if lim(2)<specialvalue
-            lim(2) = specialvalue;
-        end
-        if lim(1)>specialvalue
-            lim(1) = specialvalue;
+        if ~(lim(1)<specialvalue && lim(2)>specialvalue)
+            if lim(2)<specialvalue
+                lim(2) = specialvalue;
+            end
+            if lim(1)>specialvalue
+                lim(1) = specialvalue;
+            end
         end
         set(thisax,[thisdir 'lim'],lim);
+        axlim = [axlim lim];
     end
-    outlim = [outlim lim];
+    outlim = [outlim; axlim];
 end
