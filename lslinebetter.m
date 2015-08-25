@@ -29,20 +29,16 @@ end
 lhand = [];
 n = length(phand);
 if collapse && n>1
-  xdat = [];
-  ydat = [];
-  for p = 1:n
-    xdat = [xdat get(phand(p),'XData')];
-    ydat = [ydat get(phand(p),'YData')];
-  end
+  xdat = cell2mat(getn(phand,'xdata'));
+  ydat = cell2mat(getn(phand,'ydata'));
   if strcmp(xvalues,'adaptive')
       xvalues = [min(xdat) max(xdat)];
   end
   lhand = reflinereplace(xdat,ydat,xvalues,varargin{:});
 else
   for p = 1:n
-    xdat = get(phand(p),'XData');
-    ydat = get(phand(p),'YData');
+    xdat = getn(phand(p),'XData');
+    ydat = getn(phand(p),'YData');
     thisx = xvalues;
     if strcmp(thisx,'adaptive')
         thisx = [min(xdat) max(xdat)];
@@ -50,12 +46,15 @@ else
     lhand(end+1) = reflinereplace(xdat,ydat,thisx,varargin{:});
     try
         % bit ugly but this can fail if putting a slope on e.g. bar data.
-        set(lhand(end),'color',get(phand(p),'color'));
+        set(lhand(end),'color',getn(phand(p),'color'));
     end
   end
 end
 
 function lh = reflinereplace(xdat,ydat,xvalues,varargin)
+nanind = isnan(ydat);
+xdat(nanind) = [];
+ydat(nanind) = [];
 % linear fit
 fit = polyfit(xdat,ydat,1);
 % predicted values
