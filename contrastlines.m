@@ -82,7 +82,7 @@ for x = 1:nline
     xy(x,2) = ypos(rowind);
     lhand(x) = line([thisxs thisxs thisxe thisxe],...
         [ypos(rowind)-cap ypos(rowind) ypos(rowind) ypos(rowind)-cap],...
-        'color',[0 0 0],'linewidth',.5,'clipping','off');
+        'color',[0 0 0],'linewidth',.5,'clipping','off','parent',ax);
 end
 % resort the lines and xy so that squareform will return correct order
 [~,reverseind] = sort(ind);
