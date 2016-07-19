@@ -1,3 +1,14 @@
+% visualise orthogonal sections of the ND input array X at coordinates ind.
+%
+% INPUTS:
+% x     ND array
+% ind   N indices
+% dimlabels     cell array with labels for each dimension of x
+% dimcoords     cell array with coordinates for each x dimension
+% varargin      any additional args are passed to imagesc (at minimum, we
+%                   set the limits to be consistent across panels)
+%
+% handles = imagend(x,ind,dimlabels,dimcoords,varargin)
 function handles = imagend(x,ind,dimlabels,dimcoords,varargin)
 
 nd = ndims(x);
