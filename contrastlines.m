@@ -33,6 +33,11 @@ assert(isrdm(pmat),'input must be a valid RDM');
 getArgs(varargin,{'ypos',max(ylim(ax)),'xpos',1:ncon,'yshift',...
     range(ylim(ax))*.07,'xshiftprop',.02});
 
+if ~issorted(xpos)
+    [xpos,sortind] = sort(xpos);
+    pmat = pmat(sortind,sortind);
+end
+
 cap = yshift/2;
 
 % get the unique dissimilarities
