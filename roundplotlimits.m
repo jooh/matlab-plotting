@@ -3,12 +3,13 @@
 %
 % ax            gca     axis handle
 % axdir         'y'     axis to process ('xy' is also supported)
-% specialvalue  NaN     if present and the limits are outside this range we
-%                           rescale to include it
+% specialval    NaN     if present and the limits and any specialval are
+%                           outside range we rescale to include it. Can be
+%                           scalar or vector.
 % precision     1       number of decimal points
 % 
-% outlim = roundplotlimits(ax,axdir,specialvalue,precision)
-function outlim = roundplotlimits(ax,axdir,specialvalue,precision)
+% outlim = roundplotlimits(ax,axdir,specialval,precision)
+function outlim = roundplotlimits(ax,axdir,specialval,precision)
 
 if ieNotDefined('ax')
     ax = gca;
@@ -22,8 +23,8 @@ if ieNotDefined('precision')
     precision = 1;
 end
 
-if ieNotDefined('specialvalue')
-    specialvalue = NaN;
+if ieNotDefined('specialval')
+    specialval = NaN;
 end
 
 outlim = [];
@@ -33,13 +34,11 @@ for thisax = ax(:)'
         lim = get(thisax,[thisdir 'lim']);
         lim = [reduceprecision(lim(1),precision,@floor) ...
             reduceprecision(lim(2),precision,@ceil)];
-        if ~(lim(1)<specialvalue && lim(2)>specialvalue)
-            if lim(2)<specialvalue
-                lim(2) = specialvalue;
-            end
-            if lim(1)>specialvalue
-                lim(1) = specialvalue;
-            end
+        if lim(2) < max(specialval(:))
+            lim(2) = max(specialval(:));
+        end
+        if lim(1) > min(specialval(:))
+            lim(1) = min(specialval(:));
         end
         set(thisax,[thisdir 'lim'],lim);
         axlim = [axlim lim];
