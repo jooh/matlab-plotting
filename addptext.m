@@ -7,8 +7,12 @@
 % prefix: optional prefix to add to each (e.g., 'p=' - default '')
 % [varargin]: any additional varargin are passed to text
 %
-% T = addptext(x,y,p,[precision],[doprefix],[textargs])
-function T = addptext(x,y,p,precision,doprefix,varargin)
+% OUTPUTS
+% T: text handles
+% newy: new max y position
+%
+% [T,newy] = addptext(x,y,p,[precision],[doprefix],[textargs])
+function [T,newy] = addptext(x,y,p,precision,doprefix,varargin)
 
 if ieNotDefined('precision')
     precision = 3;
@@ -36,3 +40,15 @@ T(notnan) = text(double(x(notnan)),double(y(notnan)),pstr(notnan),...
 
 set(T(p(notnan)<0.05),'fontangle','normal','fontweight','bold');
 set(T(p(notnan)>0.05),'fontangle','italic','fontweight','normal');
+
+newy = NaN;
+if nargout<2 || ~any(notnan)
+    return
+end
+
+% if we made it here we need to work out y max
+allpos = get(T(notnan),'extent');
+allpos = cat(1,allpos{:});
+% convert width/height to endpoint coordinate
+allpos(:,3:4) = allpos(:,3:4) + allpos(:,1:2);
+newy = max([allpos(:,2); allpos(:,4)]);
