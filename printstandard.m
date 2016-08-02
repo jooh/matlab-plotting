@@ -21,7 +21,7 @@ getArgs(varargin,{'F',gcf,'formats',{'eps'},...
 formstruct = struct('png','-dpng','eps','-depsc2');
 
 % Make sure no extension
-fnbase = stripext(fnbase);
+fnbase = stripextension(fnbase);
 
 res = sprintf('-r%d',r);
 hand = sprintf('-f%d',F);
