@@ -29,9 +29,12 @@ expd = orgsize-newsize;
 % if the new canvas is smaller, we need to expand the canvas before
 % circshifting (otherwise, these arrays are all empty and nothing happens)
 % coloured fills
-right = bsxfun(@times,ones([newsize(1),expd(2),newsize(3)]),bgcolor);
-bottom = bsxfun(@times,ones([expd(1),newsize(2),newsize(3)]),bgcolor);
-bottomright = bsxfun(@times,ones([expd(1),expd(2),newsize(3)]),bgcolor);
+right = bsxfun(@times,ones([newsize(1),expd(2),newsize(3)],'like',bgcolor),...
+    bgcolor);
+bottom = bsxfun(@times,ones([expd(1),newsize(2),newsize(3)],'like',bgcolor),...
+    bgcolor);
+bottomright = bsxfun(@times,ones([expd(1),expd(2),newsize(3)],'like',bgcolor),...
+    bgcolor);
 expanded = [im right; ...
     bottom bottomright];
 
