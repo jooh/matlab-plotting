@@ -23,6 +23,10 @@ formstruct = struct('png','-dpng','eps','-depsc2');
 % Make sure no extension
 fnbase = stripextension(fnbase);
 
+if ~isnumeric(F)
+    F = F.Number;
+end
+
 res = sprintf('-r%d',r);
 hand = sprintf('-f%d',F);
 

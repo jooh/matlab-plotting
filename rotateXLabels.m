@@ -1,5 +1,7 @@
 function hh = rotateXLabels( ax, angle, varargin )
 % JC: modified this to support rotating of imagesc plots
+% JC: modified to work with xticklabelrotation property when available in newer
+% Matlab
 %rotateXLabels: rotate any xticklabels
 %
 %   hh = rotateXLabels(ax,angle) rotates all XLabels on axes AX by an angle
@@ -26,6 +28,18 @@ if ~isnumeric( angle ) || ~isscalar( angle )
     error( 'RotateXLabels:BadAngle', 'Parameter ANGLE must be a scalar angle in degrees' )
 end
 angle = mod( angle, 360 );
+
+try
+    % let's try the new way of doing this
+    set(ax,'xticklabelrotation',angle);
+    hh = [];
+    return
+catch err
+    if ~any(strcmp(err.identifier,{'MATLAB:hg:InvalidProperty',...
+            'MATLAB:class:InvalidProperty'}))
+        rethrow(err);
+    end
+end
 
 [maxStringLength] = parseInputs( varargin{:} );
 

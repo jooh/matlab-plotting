@@ -7,6 +7,13 @@ if ieNotDefined('n')
     n = 1;
 end
 
-% 0 is useful for the case of no open figs
-hands = [0; get(0,'children')];
+hands = get(0,'children');
+if isempty(hands)
+    hands = 0;
+end
+if ~isnumeric(hands)
+    % support new-style handles
+    hands = [hands.Number];
+end
 h = round(max(hands)+(1:n)*10);
+
