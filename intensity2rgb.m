@@ -15,7 +15,9 @@
 %                           undefined we use the data limits. If set to
 %                           'symmetrical', we balance the positive and
 %                           negative color range by setting the limits to
-%                           [-absmax +absmax]
+%                           [-absmax +absmax]. If 'zerobounded', we set the
+%                           limits to [0,max] (and raise exception if max is
+%                           negative).
 % greythresh -Inf      values below this threshold are converted to
 %                           greyscale
 %
